@@ -70,8 +70,50 @@ router.get("/user", authMiddleware, async (req, res) => {
     }
 });
 
+//Get user ID by email or username
+router.get("/get-id", async (req, res) => {
+    try {
+      const { email, username } = req.query;
+  
+      if (!email && !username) {
+        return res.status(400).json({ message: "Please provide email or username" });
+      }
+  
+      // Find user based on email or username
+      const user = await User.findOne({ 
+        $or: [{ email: email }, { username: username }] 
+      });
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      res.json({ userId: user._id });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching user ID", error });
+    }
+  });
+
+// Get User Details by ID
+router.get("/user/:id", async (req, res) => {
+    try {
+      const userId = req.params.id;
+  
+      // Find the user by ID
+      const user = await User.findById(userId).select("-password"); // Exclude password from response
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      res.json({ user });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching user", error });
+    }
+  });
+
 // **Update User**
-router.put("/update/:id", async (req, res) => {
+router.put("/user/update/:id", async (req, res) => {
   try {
     const { name, email, username } = req.body;
     const userId = req.params.id;
