@@ -25,7 +25,7 @@ router.get('/all/:userId', async (req, res) => {
 });
 
 // GET single module by moduleId
-router.get('/:moduleId', async (req, res) => {
+router.get('/get/:moduleId', async (req, res) => {
   try {
     const module = await Module.findOne({ moduleId: req.params.moduleId });
     if (!module) return res.status(404).json({ message: 'Module not found' });
@@ -36,7 +36,7 @@ router.get('/:moduleId', async (req, res) => {
 });
 
 // UPDATE by moduleId
-router.put('/:moduleId', async (req, res) => {
+router.put('/update/:moduleId', async (req, res) => {
   try {
     const updated = await Module.findOneAndUpdate(
       { moduleId: req.params.moduleId },
@@ -51,7 +51,7 @@ router.put('/:moduleId', async (req, res) => {
 });
 
 // DELETE by moduleId
-router.delete('/:moduleId', async (req, res) => {
+router.delete('/delete/:moduleId', async (req, res) => {
   try {
     const deleted = await Module.findOneAndDelete({ moduleId: req.params.moduleId });
     if (!deleted) return res.status(404).json({ message: 'Module not found' });
