@@ -15,6 +15,7 @@ app.use(cors()); // Enable CORS
 const authRoutes = require("./src/routes/authRoutes");
 const moduleRoutes = require("./src/routes/moduleRoutes");
 const fieldRoutes = require('./src/routes/fieldRoutes');
+const recordRoutes = require('./src/routes/recordRoutes');
 
 // Use routes
 app.use("/api/auth", authRoutes);
@@ -24,6 +25,9 @@ app.use("/api/modules", moduleRoutes);
 
 //Field routes
 app.use("/api/fields", fieldRoutes);
+
+//Record routes
+app.use("/api/records", recordRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
