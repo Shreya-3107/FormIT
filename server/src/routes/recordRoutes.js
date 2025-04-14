@@ -6,8 +6,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 // ✅ Create a record
 router.post("/create", authMiddleware, async (req, res) => {
   try {
-    const orgId = req.user.orgId;
-    const { moduleId, data } = req.body;
+    const { moduleId, data, orgId } = req.body;
 
     if (!moduleId || !Array.isArray(data)) {
       return res.status(400).json({ message: "moduleId and data are required" });
@@ -33,10 +32,9 @@ router.post("/create", authMiddleware, async (req, res) => {
 // ✅ Get all records for a module (list view)
 router.get("/list/:moduleId", authMiddleware, async (req, res) => {
   try {
-    const orgId = req.user.orgId;
     const { moduleId } = req.params;
 
-    const records = await Record.find({ orgId, moduleId });
+    const records = await Record.find({ moduleId : moduleId });
 
     const list = records.map(r => ({
       recordId: r.recordId,
@@ -44,59 +42,67 @@ router.get("/list/:moduleId", authMiddleware, async (req, res) => {
     }));
 
     res.json({ records: list });
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching records", error });
+  } 
+  catch (err) {
+    console.error("Error fetching records:", err); // <— important!
+    res.status(500).json({
+      message: "Error fetching records",
+      error: err.message || err.toString() || 'Unknown error'
+    });
   }
 });
 
 // ✅ Get detailed view of a record
 router.get("/detailed/:moduleId/:recordId", authMiddleware, async (req, res) => {
   try {
-    const orgId = req.user.orgId;
     const { moduleId, recordId } = req.params;
 
-    const record = await Record.findOne({ orgId, moduleId, recordId });
+    const record = await Record.findOne({moduleId, recordId});
 
     if (!record) {
       return res.status(404).json({ message: "Record not found" });
     }
 
     res.json({ record });
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching record", error });
+  } 
+  catch (err) {
+    console.error("Error fetching records:", err); // <— important!
+    res.status(500).json({
+      message: "Error fetching records",
+      error: err.message || err.toString() || 'Unknown error'
+    });
   }
 });
 
 // ✅ Update record
 router.put("/update/:moduleId/:recordId", authMiddleware, async (req, res) => {
   try {
-    const orgId = req.user.orgId;
     const { moduleId, recordId } = req.params;
     const { data } = req.body;
 
-    const updated = await Record.findOneAndUpdate(
-      { orgId, moduleId, recordId },
-      { data },
-      { new: true }
-    );
+    const record = await Record.findOne({ moduleId, recordId });
 
-    if (!updated) {
-      return res.status(404).json({ message: "Record not found" });
-    }
+    record.data = data || record.data;
+    
+    await record.save();
 
-    res.json({ message: "Record updated", record: updated });
-  } catch (error) {
-    res.status(500).json({ message: "Error updating record", error });
+    res.json({ message: "Record updated", record: record });
+  } 
+  catch (err) {
+    console.error("Error fetching records:", err); // <— important!
+    res.status(500).json({
+      message: "Error fetching records",
+      error: err.message || err.toString() || 'Unknown error'
+    });
   }
 });
 
 // ✅ Delete record
 router.delete("/delete/:moduleId/:recordId", authMiddleware, async (req, res) => {
   try {
-    const orgId = req.user.orgId;
     const { moduleId, recordId } = req.params;
 
-    const deleted = await Record.findOneAndDelete({ orgId, moduleId, recordId });
+    const deleted = await Record.findOneAndDelete({ moduleId, recordId });
 
     if (!deleted) {
       return res.status(404).json({ message: "Record not found" });

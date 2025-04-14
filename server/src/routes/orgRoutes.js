@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const Organization = require('../models/Organization');
 const authMiddleware = require('../middleware/authMiddleware');
@@ -25,16 +26,16 @@ router.post('/create', authMiddleware, async (req, res) => {
 
 // Get all organizations for logged-in user
 router.get('/getall', authMiddleware, async (req, res) => {
-    try {
-      const userId = req.user._id;
-  
-      const organizations = await Organization.find({ userId });
-  
-      res.status(200).json({ organizations });
-    } catch (error) {
-      console.error("Error fetching orgs:", error);
-      res.status(500).json({ message: "Failed to fetch organizations", error });
-    }
+  try {
+    const userId = req.user.userId; // Use userId from the decoded token
+
+    const organizations = await Organization.find({ userId });
+
+    res.status(200).json({ organizations });
+  } catch (error) {
+    console.error("Error fetching orgs:", error);
+    res.status(500).json({ message: "Failed to fetch organizations", error });
+  }
 });
 
 // **Get a Single Organization**
@@ -55,7 +56,7 @@ router.get('/:orgId', authMiddleware, async (req, res) => {
 // **Update Organization**
 router.put('/:orgId', authMiddleware, async (req, res) => {
   try {
-    const { orgName, description } = req.body;
+    const { orgName, industry, description } = req.body;
     const org = await Organization.findById(req.params.orgId);
     
     if (!org) {
@@ -63,6 +64,7 @@ router.put('/:orgId', authMiddleware, async (req, res) => {
     }
 
     org.orgName = orgName || org.orgName;
+    org.industry = industry || org.industry;
     org.description = description || org.description;
     
     await org.save();
@@ -75,16 +77,36 @@ router.put('/:orgId', authMiddleware, async (req, res) => {
 // **Delete Organization**
 router.delete('/:orgId', authMiddleware, async (req, res) => {
   try {
-    const org = await Organization.findById(req.params.orgId);
-    
+    const { orgId } = req.params;
+    const userId = req.user.userId; // Extract userId from token
+
+    // Ensure orgId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(orgId)) {
+      return res.status(400).json({ message: 'Invalid Organization ID format' });
+    }
+
+    // Find the organization by ID
+    const org = await Organization.findById(orgId);
+
+    // Check if the organization exists
     if (!org) {
       return res.status(404).json({ message: 'Organization not found' });
     }
 
-    await org.remove();
+    // Ensure the user is the owner of the organization
+    if (org.userId.toString() !== userId) {
+      return res.status(403).json({ message: 'Not authorized to delete this organization' });
+    }
+
+    // Delete the organization
+    await org.deleteOne();
     res.json({ message: 'Organization deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting organization', error });
+    console.error("Error deleting organization:", error);
+    res.status(500).json({
+      message: 'Error deleting organization',
+      error: error.message || error.stack
+    });
   }
 });
 

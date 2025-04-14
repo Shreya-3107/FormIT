@@ -27,16 +27,11 @@ router.post('/create', authMiddleware, async (req, res) => {
 });
 
 // 👉 Get Fields by Module
-router.get('/getall/:moduleId', authMiddleware, async (req, res) => {
+router.get('/getforMod/:moduleId', authMiddleware, async (req, res) => {
   try {
     const { moduleId } = req.params;
-    const { orgId } = req.query;
 
-    if (!orgId) {
-      return res.status(400).json({ message: 'orgId is required' });
-    }
-
-    const fields = await Field.find({ orgId, moduleId });
+    const fields = await Field.find({ moduleId });
     res.json({ fields });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching fields', error });
@@ -46,7 +41,7 @@ router.get('/getall/:moduleId', authMiddleware, async (req, res) => {
 // 👉 Get Field dets by field ID
 router.get('/getfield/:fieldId', authMiddleware, async (req, res) => {
   try{
-    const field = await Field.findOne({ fieldId: req.params.fieldId });
+    const field = await Field.findById(req.params.fieldId);
     if (!field) return res.status(404).json({ message: 'Field not found' });
     res.json({ field });
   } catch (error) {
@@ -57,24 +52,16 @@ router.get('/getfield/:fieldId', authMiddleware, async (req, res) => {
 // 👉 Update Field
 router.put('/update/:fieldId', authMiddleware, async (req, res) => {
   try {
-    const { fieldId } = req.params;
-    const { name, type, orgId } = req.body;
+    const { name, type } = req.body;
 
-    if (!orgId) {
-      return res.status(400).json({ message: 'orgId is required' });
-    }
+    const field = await Field.findById(req.params.fieldId);
 
-    const updatedField = await Field.findOneAndUpdate(
-      { fieldId, orgId },
-      { name, type },
-      { new: true }
-    );
+    field.name = name || field.name;
+    field.type = type || field.type;
+    
+    await field.save();
 
-    if (!updatedField) {
-      return res.status(404).json({ message: 'Field not found or org mismatch' });
-    }
-
-    res.json({ message: 'Field updated', field: updatedField });
+    res.json({ message: 'Field updated successfully', field: field });
   } catch (error) {
     res.status(500).json({ message: 'Error updating field', error });
   }
@@ -84,13 +71,8 @@ router.put('/update/:fieldId', authMiddleware, async (req, res) => {
 router.delete('/delete/:fieldId', authMiddleware, async (req, res) => {
   try {
     const { fieldId } = req.params;
-    const { orgId } = req.body;
 
-    if (!orgId) {
-      return res.status(400).json({ message: 'orgId is required' });
-    }
-
-    const deleted = await Field.findOneAndDelete({ fieldId, orgId });
+    const deleted = await Field.findOneAndDelete(fieldId);
 
     if (!deleted) {
       return res.status(404).json({ message: 'Field not found or org mismatch' });
