@@ -6,15 +6,14 @@ const authMiddleware = require('../middleware/authMiddleware');
 // 👉 Create Field
 router.post('/create', authMiddleware, async (req, res) => {
   try {
-    const { moduleId, name, type } = req.body;
-    const userId = req.user.userId;
+    const { moduleId, name, type, orgId } = req.body;
 
-    if (!moduleId || !name) {
-      return res.status(400).json({ message: 'Module ID and name are required' });
+    if (!moduleId || !name || !orgId) {
+      return res.status(400).json({ message: 'orgId, moduleId, and name are required' });
     }
 
     const newField = new Field({
-      userId,
+      orgId,
       moduleId,
       name,
       type
@@ -31,9 +30,13 @@ router.post('/create', authMiddleware, async (req, res) => {
 router.get('/getall/:moduleId', authMiddleware, async (req, res) => {
   try {
     const { moduleId } = req.params;
-    const userId = req.user.userId;
+    const { orgId } = req.query;
 
-    const fields = await Field.find({ userId, moduleId });
+    if (!orgId) {
+      return res.status(400).json({ message: 'orgId is required' });
+    }
+
+    const fields = await Field.find({ orgId, moduleId });
     res.json({ fields });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching fields', error });
@@ -41,28 +44,35 @@ router.get('/getall/:moduleId', authMiddleware, async (req, res) => {
 });
 
 // 👉 Get Field dets by field ID
-router.get("/getfield/:fieldId", authMiddleware, async (req, res) => {
-    try {
-      const field = await Field.findOne({ fieldId: req.params.fieldId });
-      if (!field) return res.status(404).json({ message: "Field not found" });
-      res.json({ field });
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching field", error });
-    }
-});  
+router.get('/getfield/:fieldId', authMiddleware, async (req, res) => {
+  try{
+    const field = await Field.findOne({ fieldId: req.params.fieldId });
+    if (!field) return res.status(404).json({ message: 'Field not found' });
+    res.json({ field });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching field', error });
+  }
+});
 
 // 👉 Update Field
 router.put('/update/:fieldId', authMiddleware, async (req, res) => {
   try {
     const { fieldId } = req.params;
-    const { name, type } = req.body;
-    const userId = req.user.userId;
+    const { name, type, orgId } = req.body;
+
+    if (!orgId) {
+      return res.status(400).json({ message: 'orgId is required' });
+    }
 
     const updatedField = await Field.findOneAndUpdate(
-      { fieldId, userId },
+      { fieldId, orgId },
       { name, type },
       { new: true }
     );
+
+    if (!updatedField) {
+      return res.status(404).json({ message: 'Field not found or org mismatch' });
+    }
 
     res.json({ message: 'Field updated', field: updatedField });
   } catch (error) {
@@ -74,9 +84,18 @@ router.put('/update/:fieldId', authMiddleware, async (req, res) => {
 router.delete('/delete/:fieldId', authMiddleware, async (req, res) => {
   try {
     const { fieldId } = req.params;
-    const userId = req.user.userId;
+    const { orgId } = req.body;
 
-    await Field.findOneAndDelete({ fieldId, userId });
+    if (!orgId) {
+      return res.status(400).json({ message: 'orgId is required' });
+    }
+
+    const deleted = await Field.findOneAndDelete({ fieldId, orgId });
+
+    if (!deleted) {
+      return res.status(404).json({ message: 'Field not found or org mismatch' });
+    }
+
     res.json({ message: 'Field deleted' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting field', error });

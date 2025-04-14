@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const recordSchema = new mongoose.Schema({
-  userId: { type: String, required: true },
+  orgId: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', required: true },
   moduleId: { type: String, required: true },
   recordId: { type: Number, required: true },
   data: [

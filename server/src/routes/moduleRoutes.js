@@ -6,19 +6,25 @@ const authMiddleware = require('../middleware/authMiddleware');
 // CREATE Module
 router.post('/create', authMiddleware, async (req, res) => {
   try {
-    const { name, description, userId } = req.body;
-    const module = new Module({ name, description, userId });
+    const { name, description, orgId } = req.body;
+
+    if (!orgId || !name) {
+      return res.status(400).json({ message: 'orgId and name are required' });
+    }
+
+    const module = new Module({ name, description, orgId });
     await module.save();
+
     res.status(201).json({ message: 'Module created', module });
   } catch (err) {
     res.status(500).json({ error: 'Error creating module', details: err });
   }
 });
 
-// GET all modules for a user
-router.get('/all/:userId', authMiddleware, async (req, res) => {
+// GET all modules for an org
+router.get('/all/:orgId', authMiddleware, async (req, res) => {
   try {
-    const modules = await Module.find({ userId: req.params.userId });
+    const modules = await Module.find({ orgId: req.params.orgId });
     res.json(modules);
   } catch (err) {
     res.status(500).json({ error: 'Error fetching modules' });
