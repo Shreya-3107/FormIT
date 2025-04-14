@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Module = require('../models/Modules');
+const authMiddleware = require('../middleware/authMiddleware');
 
 // CREATE Module
-router.post('/create', async (req, res) => {
+router.post('/create', authMiddleware, async (req, res) => {
   try {
     const { name, description, userId } = req.body;
     const module = new Module({ name, description, userId });
@@ -15,7 +16,7 @@ router.post('/create', async (req, res) => {
 });
 
 // GET all modules for a user
-router.get('/all/:userId', async (req, res) => {
+router.get('/all/:userId', authMiddleware, async (req, res) => {
   try {
     const modules = await Module.find({ userId: req.params.userId });
     res.json(modules);
@@ -25,7 +26,7 @@ router.get('/all/:userId', async (req, res) => {
 });
 
 // GET single module by moduleId
-router.get('/get/:moduleId', async (req, res) => {
+router.get('/get/:moduleId', authMiddleware, async (req, res) => {
   try {
     const module = await Module.findOne({ moduleId: req.params.moduleId });
     if (!module) return res.status(404).json({ message: 'Module not found' });
@@ -36,7 +37,7 @@ router.get('/get/:moduleId', async (req, res) => {
 });
 
 // UPDATE by moduleId
-router.put('/update/:moduleId', async (req, res) => {
+router.put('/update/:moduleId', authMiddleware, async (req, res) => {
   try {
     const updated = await Module.findOneAndUpdate(
       { moduleId: req.params.moduleId },
@@ -51,7 +52,7 @@ router.put('/update/:moduleId', async (req, res) => {
 });
 
 // DELETE by moduleId
-router.delete('/delete/:moduleId', async (req, res) => {
+router.delete('/delete/:moduleId', authMiddleware, async (req, res) => {
   try {
     const deleted = await Module.findOneAndDelete({ moduleId: req.params.moduleId });
     if (!deleted) return res.status(404).json({ message: 'Module not found' });

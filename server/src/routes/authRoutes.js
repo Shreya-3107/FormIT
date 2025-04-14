@@ -71,7 +71,7 @@ router.get("/user", authMiddleware, async (req, res) => {
 });
 
 //Get user ID by email or username
-router.get("/get-id", async (req, res) => {
+router.get("/get-id", authMiddleware, async (req, res) => {
     try {
       const { email, username } = req.query;
   
@@ -92,10 +92,10 @@ router.get("/get-id", async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: "Error fetching user ID", error });
     }
-  });
+});
 
 // Get User Details by ID
-router.get("/user/:id", async (req, res) => {
+router.get("/user/:id", authMiddleware, async (req, res) => {
     try {
       const userId = req.params.id;
   
@@ -113,7 +113,7 @@ router.get("/user/:id", async (req, res) => {
   });
 
 // **Update User**
-router.put("/user/update/:id", async (req, res) => {
+router.put("/user/update/:id", authMiddleware, async (req, res) => {
   try {
     const { name, email, username } = req.body;
     const userId = req.params.id;

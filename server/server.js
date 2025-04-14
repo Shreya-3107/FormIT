@@ -13,12 +13,16 @@ app.use(cors()); // Enable CORS
 
 // Import routes
 const authRoutes = require("./src/routes/authRoutes");
+const orgRoutes = require("./src/routes/orgRoutes");
 const moduleRoutes = require("./src/routes/moduleRoutes");
 const fieldRoutes = require('./src/routes/fieldRoutes');
 const recordRoutes = require('./src/routes/recordRoutes');
 
-// Use routes
+// User routes
 app.use("/api/auth", authRoutes);
+
+//Org routes
+app.use("/api/orgs", orgRoutes);
 
 //Module routes
 app.use("/api/modules", moduleRoutes);

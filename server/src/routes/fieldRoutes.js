@@ -41,7 +41,7 @@ router.get('/getall/:moduleId', authMiddleware, async (req, res) => {
 });
 
 // 👉 Get Field dets by field ID
-router.get("/getfield/:fieldId", async (req, res) => {
+router.get("/getfield/:fieldId", authMiddleware, async (req, res) => {
     try {
       const field = await Field.findOne({ fieldId: req.params.fieldId });
       if (!field) return res.status(404).json({ message: "Field not found" });
