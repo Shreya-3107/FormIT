@@ -17,6 +17,7 @@ const orgRoutes = require("./src/routes/orgRoutes");
 const moduleRoutes = require("./src/routes/moduleRoutes");
 const fieldRoutes = require('./src/routes/fieldRoutes');
 const recordRoutes = require('./src/routes/recordRoutes');
+const geminiRoutes = require('./src/routes/geminiRoutes');
 
 // User routes
 app.use("/api/auth", authRoutes);
@@ -32,6 +33,9 @@ app.use("/api/fields", fieldRoutes);
 
 //Record routes
 app.use("/api/records", recordRoutes);
+
+//Gemini AI routes
+app.use('/api/gemini', geminiRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)

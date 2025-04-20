@@ -39,7 +39,7 @@ router.get('/getall', authMiddleware, async (req, res) => {
 });
 
 // **Get a Single Organization**
-router.get('/:orgId', authMiddleware, async (req, res) => {
+router.get('/get/:orgId', authMiddleware, async (req, res) => {
   try {
     const org = await Organization.findById(req.params.orgId);
     
@@ -54,7 +54,7 @@ router.get('/:orgId', authMiddleware, async (req, res) => {
 });
 
 // **Update Organization**
-router.put('/:orgId', authMiddleware, async (req, res) => {
+router.put('/update/:orgId', authMiddleware, async (req, res) => {
   try {
     const { orgName, industry, description } = req.body;
     const org = await Organization.findById(req.params.orgId);
@@ -75,7 +75,7 @@ router.put('/:orgId', authMiddleware, async (req, res) => {
 });
 
 // **Delete Organization**
-router.delete('/:orgId', authMiddleware, async (req, res) => {
+router.delete('/delete/:orgId', authMiddleware, async (req, res) => {
   try {
     const { orgId } = req.params;
     const userId = req.user.userId; // Extract userId from token
