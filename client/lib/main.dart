@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trial/screens/dashboard/Dashboard.dart';
 import 'screens/auth_pages/NewUser.dart';
 import 'screens/auth_pages/LoginPage.dart';
 import 'screens/org_pages/OrgCreation.dart';
@@ -21,9 +22,12 @@ class MyApp extends StatelessWidget {
       title: 'FormIT: Custom App Builder',
       debugShowCheckedModeBanner: false,
       routes: {
+        '/dashboard': (context) => DashBoard(),
         '/signup': (context) => const NewUser(),
         '/login': (context) => LoginPage(),
         '/orgCreation': (context) => OrgCreation(),
+        // '/manualModuleCreation': (context) => ManualModuleCreation(),
+        // '/recordCreation': (context) => RecordCreation(),
       },
       home: FutureBuilder<bool>(
         future: checkLoginStatus(),
@@ -35,7 +39,7 @@ class MyApp extends StatelessWidget {
           }
 
           if (snapshot.hasData && snapshot.data == true) {
-             return OrgCreation(); //replace this to homepage call
+             return DashBoard();
           }
           else {
             return LoginPage();

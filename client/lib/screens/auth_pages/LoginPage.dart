@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trial/screens/org_pages/OrgCreation.dart';
+import 'package:trial/screens/org_pages/OrgSelection.dart';
 import '../../constants/api_constants.dart';
 import '../../widgets/GlassContainer.dart';
 import '../../widgets/GradientTextField.dart';
@@ -19,8 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
-
-  Future<void> loginUser() async {
+  Future<void> loginUser() async
+  {
     setState(() {
       _isLoading = true;
     });
@@ -35,20 +35,34 @@ class _LoginPageState extends State<LoginPage> {
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200)
+      {
         final responseData = json.decode(response.body);
-        final token = responseData['token'];
+        final jwtToken = responseData['token'];
 
         // Store the token securely using SharedPreferences (or any secure storage solution)
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('jwt_token', token);
+        await prefs.setString('token', jwtToken);
 
-        // Navigate to the dashboard
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => OrgCreation()),
+        final orgsResponse = await http.get(
+          Uri.parse(ApiConstants.getAllOrgs),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken',
+          },
         );
-      } else {
+
+        final organizations = json.decode(orgsResponse.body)['organizations'];
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OrgSelection(orgs: organizations),
+          ),
+        );
+      }
+      else
+      {
         final error = json.decode(response.body);
         showDialog(
           context: context,

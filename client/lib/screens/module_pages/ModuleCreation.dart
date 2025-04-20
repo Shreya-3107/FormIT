@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/constants/api_constants.dart';
 import 'package:trial/screens/field_pages/FieldCreation.dart';
+import 'package:trial/widgets/GlassContainer.dart';
 
 class ModuleCreation extends StatefulWidget {
   final List<Map<String, String>> modules;
@@ -85,7 +86,7 @@ class _ModuleCreationState extends State<ModuleCreation> {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: GlassContainer2(
+            child: GlassContainer(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SingleChildScrollView(
@@ -190,32 +191,6 @@ class _ModuleCreationState extends State<ModuleCreation> {
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class GlassContainer2 extends StatelessWidget {
-  final Widget child;
-
-  const GlassContainer2({super.key, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.horizontal(),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withAlpha(100),
-          borderRadius: BorderRadius.circular(50.0),
-          border: Border.all(
-            color: Colors.white.withAlpha(100),
-          ),
-        ),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: child,
         ),
       ),
     );

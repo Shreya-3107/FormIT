@@ -116,12 +116,6 @@ class _NewUserState extends State<NewUser> {
         // Save JWT token in shared preferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwtToken', jwtToken);
-
-        // Navigate to dashboard screen
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => ModuleCreation()),
-        // );
       }
       else
       {

@@ -107,9 +107,9 @@ class _FieldCreationState extends State<FieldCreation> {
             child: GlassContainer(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : SingleChildScrollView(
+                child: _isLoading ? const Center(child: CircularProgressIndicator()) :
+                SingleChildScrollView(
+                  padding: const EdgeInsets.only(bottom: 50),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
