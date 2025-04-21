@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/constants/api_constants.dart';
+import 'package:trial/screens/dashboard/Dashboard.dart';
 import 'package:trial/screens/field_pages/FieldCreation.dart';
 import 'package:trial/widgets/GlassContainer.dart';
 
@@ -26,11 +27,12 @@ class _ModuleCreationState extends State<ModuleCreation> {
     _selectedModules = List.generate(widget.modules.length, (_) => false);
   }
 
-  Future<void> createModulesAndStartFieldCreation(String moduleName, String moduleDescription) async {
+  Future<void> createModuleAndStartFieldCreation(String moduleName, String moduleDescription) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final orgId = prefs.getString('orgId');
 
+    // Step 1: Create the module
     final response = await http.post(
       Uri.parse(ApiConstants.createModule),
       headers: {
@@ -44,14 +46,13 @@ class _ModuleCreationState extends State<ModuleCreation> {
       }),
     );
 
-    if (response.statusCode == 201)
-    {
+    if (response.statusCode == 201) {
       final responseData = json.decode(response.body);
       final moduleMap = responseData['module'];
       String moduleId = moduleMap['_id'];
       print('Module $moduleName created successfully with ID $moduleId');
 
-      // Navigate to FieldCreation for this module
+      // Step 2: Navigate to FieldCreation for this module
       await Navigator.push(
         context,
         MaterialPageRoute(
@@ -62,14 +63,9 @@ class _ModuleCreationState extends State<ModuleCreation> {
           ),
         ),
       );
-    }
-    else
-    {
+    } else {
       print('Failed to create module $moduleName: ${response.body}');
     }
-
-    // After all modules and fields are done
-    Navigator.pushReplacementNamed(context, '/dashboard');
   }
 
   @override
@@ -150,22 +146,26 @@ class _ModuleCreationState extends State<ModuleCreation> {
       floatingActionButton: Align(
         alignment: Alignment.bottomCenter,
         child: GestureDetector(
-          onTap: () {
+          onTap: () async {
             List<Map<String, String>> selectedModules = [];
             for (int i = 0; i < widget.modules.length; i++) {
-              if (_selectedModules[i])
-              {
+              if (_selectedModules[i]) {
                 selectedModules.add(widget.modules[i]);
               }
             }
 
-            for(int i=0; i<selectedModules.length; i++)
-            {
+            for (int i = 0; i < selectedModules.length; i++) {
               String moduleName = selectedModules[i]['name']!;
               String moduleDescription = selectedModules[i]['description']!;
-
-              createModulesAndStartFieldCreation(moduleName, moduleDescription);
+              await createModuleAndStartFieldCreation(moduleName, moduleDescription);
             }
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DashBoard()
+              ),
+            );
           },
           onTapDown: (_) => setState(() => _scale = 0.9),
           onTapUp: (_) => setState(() => _scale = 1.0),

@@ -4,6 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/constants/api_constants.dart';
 
+import '../record_pages/RecordCreation.dart';
+import '../record_pages/RecordDetails.dart';
+
 class ModuleRecords extends StatefulWidget {
   final String moduleId;
   final String moduleName;
@@ -54,10 +57,11 @@ class _ModuleRecordsState extends State<ModuleRecords> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
-          records = data;
+          records = data['records']; // ✅ fix here
           _isLoading = false;
         });
-      } else {
+      }
+      else {
         setState(() {
           _isLoading = false;
           _errorMessage = "Failed to load records: ${response.body}";
@@ -85,24 +89,54 @@ class _ModuleRecordsState extends State<ModuleRecords> {
           : records.isEmpty
           ? const Center(child: Text('No records found'))
           : ListView.builder(
-        itemCount: records.length,
-        itemBuilder: (context, index) {
-          final record = records[index];
-          return Card(
-            margin: const EdgeInsets.all(8),
-            child: ListTile(
-              title: Text('Record ${record['name']}'),
-              subtitle: Text('Data: ${record['data']}'),
-            ),
-          );
-        },
+          itemCount: records.length,
+          itemBuilder: (context, index) {
+            final record = records[index];
+            final id = record['recordId'] ?? '';
+            final title = record['title'] ?? '';
+
+            return Card(
+              margin: const EdgeInsets.all(8),
+              child: ListTile(
+                title: Text('$id : $title'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecordDetailsPage(
+                        moduleId: widget.moduleId,
+                        recordId: record['recordId'].toString(),
+                        moduleName: widget.moduleName,
+                      ),
+                    ),
+                  );
+                },
+
+              ),
+            );
+          }
+
+
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(16.0), // Adjust the margin around the button
         child: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/recordCreation');
+          onPressed: () async {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RecordCreation(
+                  moduleId: widget.moduleId,
+                  moduleName: widget.moduleName,
+                ),
+              ),
+            );
+
+            if (result == true) {
+              fetchRecords(); // Or whatever your refresh logic is
+            }
           },
+
           backgroundColor: Colors.indigo[400], // Background color
           child: const Icon(
             Icons.add,

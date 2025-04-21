@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/constants/api_constants.dart';
+import 'package:trial/screens/module_pages/ManualModuleCreation.dart';
 import '../../widgets/GlassContainer.dart';
 import '../module_pages/ModuleRecords.dart';
 
@@ -14,6 +15,7 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // Added ScaffoldKey
   List<dynamic> modules = [];
   bool _isLoading = true;
   String orgName = '';
@@ -22,6 +24,65 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     super.initState();
     fetchModulesAndOrg();
+  }
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all saved data
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+  }
+
+  Future<void> _confirmDelete(BuildContext context, String moduleId) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Delete Module"),
+        content: const Text("Are you sure you want to delete this module?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete == true) {
+      await _deleteModule(moduleId);
+    }
+  }
+
+  Future<void> _deleteModule(String moduleId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token == null) return;
+
+    final response = await http.delete(
+      Uri.parse(ApiConstants.deleteModule + moduleId),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        modules.removeWhere((module) => module['_id'] == moduleId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Module deleted")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to delete module")),
+      );
+    }
   }
 
   Future<void> fetchModulesAndOrg() async {
@@ -67,6 +128,7 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey, // Assign ScaffoldKey to the Scaffold
       endDrawer: Builder(
         builder: (BuildContext context) {
           return Drawer(
@@ -85,12 +147,20 @@ class _DashBoardState extends State<DashBoard> {
                     ),
                   ),
                 ),
-                // More drawer items can be added here
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text("Logout"),
+                  onTap: () async {
+                    Navigator.of(context).pop(); // close the drawer
+                    await _logout();
+                  },
+                ),
               ],
             ),
           );
         },
       ),
+
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -134,7 +204,7 @@ class _DashBoardState extends State<DashBoard> {
                         IconButton(
                           icon: const Icon(Icons.settings, color: Colors.indigo),
                           onPressed: () {
-                            Scaffold.of(context).openEndDrawer();
+                            _scaffoldKey.currentState?.openEndDrawer(); // Open the drawer directly using the key
                           },
                         ),
                       ],
@@ -154,11 +224,13 @@ class _DashBoardState extends State<DashBoard> {
                           final module = modules[index];
                           return GestureDetector(
                             onTap: () {
-                              // Navigate to the ModuleRecords page
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ModuleRecords(moduleId: module['_id'], moduleName: module['name']),
+                                  builder: (context) => ModuleRecords(
+                                    moduleId: module['_id'],
+                                    moduleName: module['name'],
+                                  ),
                                 ),
                               );
                             },
@@ -167,8 +239,8 @@ class _DashBoardState extends State<DashBoard> {
                                 borderRadius: BorderRadius.circular(20),
                                 gradient: LinearGradient(
                                   colors: [
-                                    Colors.indigo.shade100.withOpacity(0.6),
-                                    Colors.indigo.shade500.withOpacity(0.3),
+                                    Colors.indigo.shade50.withOpacity(0.6),
+                                    Colors.indigo.shade100.withOpacity(0.3),
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -177,24 +249,51 @@ class _DashBoardState extends State<DashBoard> {
                                   BoxShadow(
                                     color: Colors.indigo.shade200,
                                     blurRadius: 8,
-                                    offset: Offset(0, 4),
+                                    offset: const Offset(0, 4),
                                   ),
                                 ],
                               ),
                               padding: const EdgeInsets.all(12),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: Stack(
                                 children: [
-                                  Icon(Icons.folder_copy_rounded, size: 40, color: Colors.indigo.shade900),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    module['name'],
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      color: Colors.indigo.shade900,
+                                  Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.folder_open_rounded,
+                                            size: 40, color: Colors.indigo.shade900),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          module['name'],
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            color: Colors.indigo.shade900,
+                                          ),
+                                        ),
+                                      ],
                                     ),
+                                  ),
+                                  Positioned(
+                                    bottom: 4,
+                                    left: 4,
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        FocusScope.of(context).unfocus();
+                                        _confirmDelete(context, module['_id']);
+                                      },
+                                      label: const Icon(
+                                        Icons.delete,
+                                        color: Color(0xEEEEEEFF), // Icon color
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xFFAB4646), // Background color of the button
+                                        shape: CircleBorder(), // Makes the button circular
+                                        padding: const EdgeInsets.all(16), // Adjust padding for circular shape
+                                      ),
+                                    )
+
                                   ),
                                 ],
                               ),
@@ -213,9 +312,19 @@ class _DashBoardState extends State<DashBoard> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(16.0), // Adjust the margin around the button
         child: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/manualModuleCreation');
+          onPressed: () async {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ManualModuleCreation(),
+              ),
+            );
+
+            if (result == true) {
+              fetchModulesAndOrg(); // refresh modules after successful creation
+            }
           },
+
           backgroundColor: Colors.indigo[400], // Background color
           child: const Icon(
             Icons.add,

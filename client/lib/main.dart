@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/screens/dashboard/Dashboard.dart';
+import 'package:trial/screens/module_pages/ManualModuleCreation.dart';
 import 'screens/auth_pages/NewUser.dart';
 import 'screens/auth_pages/LoginPage.dart';
 import 'screens/org_pages/OrgCreation.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const NewUser(),
         '/login': (context) => LoginPage(),
         '/orgCreation': (context) => OrgCreation(),
-        // '/manualModuleCreation': (context) => ManualModuleCreation(),
+        '/manualModuleCreation': (context) => ManualModuleCreation(),
         // '/recordCreation': (context) => RecordCreation(),
       },
       home: FutureBuilder<bool>(
