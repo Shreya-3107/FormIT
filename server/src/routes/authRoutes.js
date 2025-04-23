@@ -82,9 +82,9 @@ router.get("/get-id", authMiddleware, async (req, res) => {
 });
 
 // Get User Details by ID
-router.get("/user/:id", authMiddleware, async (req, res) => {
+router.get("/user/getDetails", authMiddleware, async (req, res) => {
     try {
-      const userId = req.params.id;
+      const userId = req.user.userId;
   
       // Find the user by ID
       const user = await User.findById(userId).select("-password"); // Exclude password from response
@@ -100,10 +100,10 @@ router.get("/user/:id", authMiddleware, async (req, res) => {
   });
 
 // **Update User**
-router.put("/user/update/:id", authMiddleware, async (req, res) => {
+router.put("/user/update", authMiddleware, async (req, res) => {
   try {
     const { name, email, username } = req.body;
-    const userId = req.params.id;
+    const userId = req.user.userId;
 
     // Find the user and update details
     const updatedUser = await User.findByIdAndUpdate(
@@ -123,7 +123,7 @@ router.put("/user/update/:id", authMiddleware, async (req, res) => {
 });
 
 // **Delete User**
-router.delete("/user", authMiddleware, async (req, res) => {
+router.delete("/user/delete", authMiddleware, async (req, res) => {
     try {
         await User.findByIdAndDelete(req.user.userId);
         res.json({ message: "User deleted successfully" });

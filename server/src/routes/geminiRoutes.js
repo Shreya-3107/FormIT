@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const fetch = require('node-fetch');
+const authMiddleware = require('../middleware/authMiddleware');
+
 
 require('dotenv').config(); 
 
-router.post('/suggest-modules', async (req, res) => {
+router.post('/suggest-modules', authMiddleware, async (req, res) => {
   const { industry, description } = req.body;
 
   if (!industry || !description) {
@@ -66,7 +68,7 @@ router.post('/suggest-modules', async (req, res) => {
 });
 
 
-router.post('/suggest-fields', async (req, res) => {
+router.post('/suggest-fields', authMiddleware, async (req, res) => {
   const { moduleName, description } = req.body;
 
   if (!moduleName || !description) {
