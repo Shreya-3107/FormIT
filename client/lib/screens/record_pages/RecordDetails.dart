@@ -230,9 +230,9 @@ class _RecordDetailsPageState extends State<RecordDetailsPage> {
       floatingActionButton: Stack(
         children: [
           Positioned(
-            top: 55,
-            right: 16,
-            child: Row(
+            bottom: 8,
+            right: 8,
+            child: Column(
               children: [
                 ElevatedButton.icon(
                   onPressed: () {
@@ -248,7 +248,7 @@ class _RecordDetailsPageState extends State<RecordDetailsPage> {
                     padding: const EdgeInsets.all(20), // Adjust padding for circular shape
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(height: 10),
                 ElevatedButton.icon(
                   onPressed: () {
                     FocusScope.of(context).unfocus();

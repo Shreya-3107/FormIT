@@ -173,38 +173,36 @@ class _FieldCreationState extends State<FieldCreation> {
           ),
         ),
       ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomCenter,
-        child: GestureDetector(
-          onTap: () {
-            final selected = <String>[];
-            for (int i = 0; i < suggestedFields.length; i++) {
-              if (_selectedFields[i]) selected.add(suggestedFields[i]);
-            }
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: GestureDetector(
+        onTap: () {
+          final selected = <String>[];
+          for (int i = 0; i < suggestedFields.length; i++) {
+            if (_selectedFields[i]) selected.add(suggestedFields[i]);
+          }
 
-            if (selected.isNotEmpty) {
-              createFields(selected);
-            } else {
-              Navigator.pop(context);
-            }
-          },
-          child: Container(
-            width: 300,
-            height: 50,
-            margin: const EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.indigo.shade300, Colors.indigo.shade100],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
+          if (selected.isNotEmpty) {
+            createFields(selected);
+          } else {
+            Navigator.pop(context);
+          }
+        },
+        child: Container(
+          width: 200,
+          height: 50,
+          margin: const EdgeInsets.only(bottom: 20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.indigo.shade300, Colors.indigo.shade100],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            child: const Center(
-              child: Text(
-                'Create Fields',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Center(
+            child: Text(
+              'Create Fields',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ),
         ),

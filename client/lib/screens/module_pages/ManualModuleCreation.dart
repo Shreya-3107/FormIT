@@ -79,109 +79,120 @@ class _ManualModuleCreationState extends State<ManualModuleCreation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.purple.shade50, Colors.indigo.shade100],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: GlassContainer(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    const SizedBox(height: 40),
-                    ShaderMask(
-                      shaderCallback: (bounds) {
-                        return LinearGradient(
-                          colors: [Colors.indigo, Colors.grey],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
-                      },
-                      child: Text(
-                        "Create Module",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontFamily: 'Pixel',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.purple.shade50, Colors.indigo.shade100],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: constraints.maxWidth < 600 ? double.infinity : 500,
                     ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: "Module Name",
-                        labelStyle: TextStyle(color: Colors.indigo),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.indigo),
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.indigo),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _descController,
-                      decoration: const InputDecoration(
-                        labelText: "Module Description",
-                        labelStyle: TextStyle(color: Colors.indigo),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.indigo),
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.indigo),
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 30),
-                    if (_isLoading)
-                      const CircularProgressIndicator()
-                    else
-                      GestureDetector(
-                        onTap: createModule,
-                        onTapDown: (_) => setState(() => _scale = 0.9),
-                        onTapUp: (_) => setState(() => _scale = 1.0),
-                        onTapCancel: () => setState(() => _scale = 1.0),
-                        child: Transform.scale(
-                          scale: _scale,
-                          child: Container(
-                            width: double.infinity,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Colors.indigo.shade300, Colors.indigo.shade100],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Center(
+                    child: GlassContainer(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            const SizedBox(height: 40),
+                            ShaderMask(
+                              shaderCallback: (bounds) {
+                                return LinearGradient(
+                                  colors: [Colors.indigo, Colors.grey],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                              },
                               child: Text(
-                                'Create Module',
-                                style: TextStyle(
-                                  fontSize: 18,
+                                "Create Module",
+                                style: const TextStyle(
+                                  fontSize: 28,
+                                  fontFamily: 'Pixel',
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
                               ),
                             ),
-                          ),
+                            const SizedBox(height: 20),
+                            TextField(
+                              controller: _nameController,
+                              decoration: const InputDecoration(
+                                labelText: "Module Name",
+                                labelStyle: TextStyle(color: Colors.indigo),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.indigo),
+                                ),
+                              ),
+                              style: const TextStyle(color: Colors.indigo),
+                            ),
+                            const SizedBox(height: 16),
+                            TextField(
+                              controller: _descController,
+                              decoration: const InputDecoration(
+                                labelText: "Module Description",
+                                labelStyle: TextStyle(color: Colors.indigo),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.indigo),
+                                ),
+                              ),
+                              style: const TextStyle(color: Colors.indigo),
+                              maxLines: 3,
+                            ),
+                            const SizedBox(height: 30),
+                            if (_isLoading)
+                              const CircularProgressIndicator()
+                            else
+                              GestureDetector(
+                                onTap: createModule,
+                                onTapDown: (_) => setState(() => _scale = 0.9),
+                                onTapUp: (_) => setState(() => _scale = 1.0),
+                                onTapCancel: () => setState(() => _scale = 1.0),
+                                child: Transform.scale(
+                                  scale: _scale,
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [Colors.indigo.shade300, Colors.indigo.shade100],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Center(
+                                      child: Text(
+                                        'Create Module',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
-                  ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

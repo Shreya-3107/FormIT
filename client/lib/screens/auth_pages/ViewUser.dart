@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/constants/api_constants.dart';
-
 import '../../widgets/GlassContainer.dart';
 
 class ViewUser extends StatefulWidget {
@@ -14,7 +13,10 @@ class ViewUser extends StatefulWidget {
 class _ViewUserState extends State<ViewUser> {
   bool isLoading = true;
   bool isError = false;
+  double _scale = 1.0;
   Map<String, dynamic> userDetails = {};
+  late List<String> fields;
+  late List<String> userMapKeys;
 
   @override
   void initState() {
@@ -45,6 +47,8 @@ class _ViewUserState extends State<ViewUser> {
       if (response.statusCode == 200) {
         setState(() {
           userDetails = json.decode(response.body)['user'];
+          fields = ['Full Name', 'Username', 'Email ID'];
+          userMapKeys = ['name', 'username', 'email'];
           isLoading = false;
         });
       } else {
@@ -100,23 +104,68 @@ class _ViewUserState extends State<ViewUser> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      _buildUserDetail("Full Name", userDetails["name"] ?? ""),
-                      _buildUserDetail("Email", userDetails["email"] ?? ""),
-                      _buildUserDetail("Username", userDetails["username"] ?? ""),
-                      // Add more fields if necessary
-                      SizedBox(height: 30),
-                      Align(
-                        alignment: Alignment.center,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Handle edit or other actions
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: 3,
+                          itemBuilder: (context, index) {
+                            final field = fields[index];
+                            final fieldKey = userMapKeys[index];
+                            return Container(
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Colors.white30),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${field}: ",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      userDetails[fieldKey].toString(),
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
                           },
-                          child: Text("Edit Profile"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () => {
+                          //TODO: Edit user
+                        },
+                        onTapDown: (_) => setState(() => _scale = 0.9),
+                        onTapUp: (_) => setState(() => _scale = 1.0),
+                        onTapCancel: () => setState(() => _scale = 1.0),
+                        child: Transform.scale(
+                          scale: _scale,
+                          child: Container(
+                            width: 150,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.indigo.shade300, Colors.indigo.shade100],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Edit User',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                              ),
                             ),
                           ),
                         ),
@@ -127,34 +176,6 @@ class _ViewUserState extends State<ViewUser> {
               ),
             ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildUserDetail(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Text(
-            "$label: ",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: Colors.indigo,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.indigo,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
       ),
     );
   }

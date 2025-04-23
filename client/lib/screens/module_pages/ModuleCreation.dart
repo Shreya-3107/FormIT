@@ -143,51 +143,49 @@ class _ModuleCreationState extends State<ModuleCreation> {
           ),
         ),
       ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomCenter,
-        child: GestureDetector(
-          onTap: () async {
-            List<Map<String, String>> selectedModules = [];
-            for (int i = 0; i < widget.modules.length; i++) {
-              if (_selectedModules[i]) {
-                selectedModules.add(widget.modules[i]);
-              }
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: GestureDetector(
+        onTap: () async {
+          List<Map<String, String>> selectedModules = [];
+          for (int i = 0; i < widget.modules.length; i++) {
+            if (_selectedModules[i]) {
+              selectedModules.add(widget.modules[i]);
             }
+          }
 
-            for (int i = 0; i < selectedModules.length; i++) {
-              String moduleName = selectedModules[i]['name']!;
-              String moduleDescription = selectedModules[i]['description']!;
-              await createModuleAndStartFieldCreation(moduleName, moduleDescription);
-            }
+          for (int i = 0; i < selectedModules.length; i++) {
+            String moduleName = selectedModules[i]['name']!;
+            String moduleDescription = selectedModules[i]['description']!;
+            await createModuleAndStartFieldCreation(moduleName, moduleDescription);
+          }
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DashBoard()
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DashBoard()
+            ),
+          );
+        },
+        onTapDown: (_) => setState(() => _scale = 0.9),
+        onTapUp: (_) => setState(() => _scale = 1.0),
+        onTapCancel: () => setState(() => _scale = 1.0),
+        child: Transform.scale(
+          scale: _scale,
+          child: Container(
+            width: 200,
+            height: 50,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.indigo.shade300, Colors.indigo.shade100],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            );
-          },
-          onTapDown: (_) => setState(() => _scale = 0.9),
-          onTapUp: (_) => setState(() => _scale = 1.0),
-          onTapCancel: () => setState(() => _scale = 1.0),
-          child: Transform.scale(
-            scale: _scale,
-            child: Container(
-              width: 300,
-              height: 50,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.indigo.shade300, Colors.indigo.shade100],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Text(
-                  'Create Modules',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Text(
+                'Create Modules',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ),
           ),

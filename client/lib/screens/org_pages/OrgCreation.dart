@@ -185,38 +185,36 @@ class _OrgCreationState extends State<OrgCreation> {
                         labelText: 'Description',
                         maxLines: 3,
                       ),
+                      const SizedBox(height: 10),
+                      GestureDetector(
+                        onTap: createOrganization,
+                        onTapDown: (_) => setState(() => _scale = 0.9),
+                        onTapUp: (_) => setState(() => _scale = 1.0),
+                        onTapCancel: () => setState(() => _scale = 1.0),
+                        child: Transform.scale(
+                          scale: _scale,
+                          child: Container(
+                            width: 200,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.indigo.shade300, Colors.indigo.shade100],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Create Organization',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomCenter,
-        child: GestureDetector(
-          onTap: createOrganization,
-          onTapDown: (_) => setState(() => _scale = 0.9),
-          onTapUp: (_) => setState(() => _scale = 1.0),
-          onTapCancel: () => setState(() => _scale = 1.0),
-          child: Transform.scale(
-            scale: _scale,
-            child: Container(
-              width: 300,
-              height: 50,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.indigo.shade300, Colors.indigo.shade100],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Text(
-                  'Create Organization',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               ),
             ),

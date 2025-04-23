@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+  double _scale = 1.0;
 
   Future<void> loginUser() async
   {
@@ -114,10 +115,10 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
             child: GlassContainer(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -155,21 +156,27 @@ class _LoginPageState extends State<LoginPage> {
                       else
                         GestureDetector(
                           onTap: loginUser,
-                          child: Container(
-                            width: 150,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Colors.indigo.shade300, Colors.indigo.shade100],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
+                          onTapDown: (_) => setState(() => _scale = 0.9),
+                          onTapUp: (_) => setState(() => _scale = 1.0),
+                          onTapCancel: () => setState(() => _scale = 1.0),
+                          child: Transform.scale(
+                            scale: _scale,
+                            child: Container(
+                              width: 150,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Colors.indigo.shade300, Colors.indigo.shade100],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Login',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                              child: Center(
+                                child: Text(
+                                  'Login',
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                                ),
                               ),
                             ),
                           ),

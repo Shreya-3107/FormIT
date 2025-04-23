@@ -290,7 +290,7 @@ class _DashBoardState extends State<DashBoard> {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.settings, color: Colors.indigo),
+                          icon: Icon(Icons.settings, color: Colors.indigo[800]),
                           onPressed: () {
                             _scaffoldKey.currentState?.openEndDrawer(); // Open the drawer directly using the key
                           },
@@ -302,8 +302,8 @@ class _DashBoardState extends State<DashBoard> {
                       child: modules.isEmpty ? Center(child: Text("No modules found")) :
                       GridView.builder(
                         itemCount: modules.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: MediaQuery.of(context).size.width < 400 ? 1 : 2,
                           childAspectRatio: 1.1,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,

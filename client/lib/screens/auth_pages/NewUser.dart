@@ -167,10 +167,10 @@ class _NewUserState extends State<NewUser> {
         ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
             child: GlassContainer(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -226,38 +226,36 @@ class _NewUserState extends State<NewUser> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: createUser,
+                        onTapDown: (_) => setState(() => _scale = 0.9),
+                        onTapUp: (_) => setState(() => _scale = 1.0),
+                        onTapCancel: () => setState(() => _scale = 1.0),
+                        child: Transform.scale(
+                          scale: _scale,
+                          child: Container(
+                            width: 200,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.indigo.shade400, Colors.indigo.shade200],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Create Account',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomCenter,
-        child: GestureDetector(
-          onTap: createUser,
-          onTapDown: (_) => setState(() => _scale = 0.9),
-          onTapUp: (_) => setState(() => _scale = 1.0),
-          onTapCancel: () => setState(() => _scale = 1.0),
-          child: Transform.scale(
-            scale: _scale,
-            child: Container(
-              width: 200,
-              height: 50,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.indigo.shade400, Colors.indigo.shade200],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Text(
-                  'Create Account',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
                 ),
               ),
             ),
