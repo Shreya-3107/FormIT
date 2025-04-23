@@ -28,7 +28,6 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/orgCreation': (context) => OrgCreation(),
         '/manualModuleCreation': (context) => ManualModuleCreation(),
-        // '/recordCreation': (context) => RecordCreation(),
       },
       home: FutureBuilder<bool>(
         future: checkLoginStatus(),

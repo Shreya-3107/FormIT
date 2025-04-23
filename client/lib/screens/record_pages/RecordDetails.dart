@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trial/screens/module_pages/ModuleRecords.dart';
+import 'package:trial/screens/record_pages/RecordsList.dart';
 import '../../constants/api_constants.dart';
 
 class RecordDetailsPage extends StatefulWidget {
@@ -30,6 +30,64 @@ class _RecordDetailsPageState extends State<RecordDetailsPage> {
   void initState() {
     super.initState();
     fetchRecordDetails();
+  }
+
+  Future<void> _confirmDelete(BuildContext context, String moduleId, String recordId) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Delete Record"),
+        content: const Text("Are you sure you want to delete this record?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete == true) {
+      await _deleteRecord(moduleId, recordId);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Recordslist(moduleId: widget.moduleId, moduleName: widget.moduleName),
+        ),
+      );
+    }
+  }
+
+  Future<void> _deleteRecord(String moduleId, String recordId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token == null) return;
+
+    final response = await http.delete(
+      Uri.parse('${ApiConstants.deleteRecordDetails}$moduleId/$recordId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200)
+    {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Record deleted")),
+      );
+    }
+    else
+    {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to delete record")),
+      );
+    }
   }
 
   Future<void> fetchRecordDetails() async {
@@ -79,9 +137,9 @@ class _RecordDetailsPageState extends State<RecordDetailsPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xffe0c3fc), Color(0xff8ec5fc)],
+            colors: [Colors.purple.shade50, Colors.indigo.shade100],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -92,7 +150,7 @@ class _RecordDetailsPageState extends State<RecordDetailsPage> {
             ? Center(child: Text(error!))
             : Padding(
           padding: const EdgeInsets.all(20.0),
-          child: GlassContainer(
+          child: GlassContainer2(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -100,16 +158,29 @@ class _RecordDetailsPageState extends State<RecordDetailsPage> {
                   children: [
                     IconButton(
                         icon: Icon(Icons.navigate_before),
+                        color: Colors.indigo[800],
                         onPressed: () => {
                           Navigator.pop(context)
                         }
                     ),
-                     Text(
-                      "Record Details",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                    Expanded(
+                      child: ShaderMask(
+                        shaderCallback: (bounds) {
+                          return LinearGradient(
+                            colors: [Colors.indigo, Colors.grey],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                        },
+                        child: Text(
+                          'Record Details',
+                          style: const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Pixel',
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -180,7 +251,8 @@ class _RecordDetailsPageState extends State<RecordDetailsPage> {
                 const SizedBox(width: 10),
                 ElevatedButton.icon(
                   onPressed: () {
-                    //TODO: decide this
+                    FocusScope.of(context).unfocus();
+                    _confirmDelete(context, widget.moduleId, widget.recordId);
                   },
                   label: const Icon(
                     Icons.delete,
@@ -201,9 +273,9 @@ class _RecordDetailsPageState extends State<RecordDetailsPage> {
   }
 }
 
-class GlassContainer extends StatelessWidget {
+class GlassContainer2 extends StatelessWidget {
   final Widget child;
-  const GlassContainer({super.key, required this.child});
+  const GlassContainer2({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

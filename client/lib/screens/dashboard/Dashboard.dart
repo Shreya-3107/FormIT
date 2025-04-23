@@ -4,8 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/constants/api_constants.dart';
 import 'package:trial/screens/module_pages/ManualModuleCreation.dart';
+import 'package:trial/screens/record_pages/RecordsList.dart';
 import '../../widgets/GlassContainer.dart';
-import '../module_pages/ModuleRecords.dart';
+import '../auth_pages/NewUser.dart';
+import '../auth_pages/ViewUser.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -56,6 +58,42 @@ class _DashBoardState extends State<DashBoard> {
       await _deleteModule(moduleId);
     }
   }
+
+  Future<void> _deleteUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token == null) return;
+
+    final response = await http.delete(
+      Uri.parse(ApiConstants.deleteUser),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200)
+    {
+      // Ensure token is cleared
+      await prefs.remove('token');  // Explicitly remove the token
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("User deleted")),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => NewUser()), // Navigate to signup
+      );
+    }
+    else
+    {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to delete user")),
+      );
+    }
+  }
+
 
   Future<void> _deleteModule(String moduleId) async {
     final prefs = await SharedPreferences.getInstance();
@@ -137,7 +175,7 @@ class _DashBoardState extends State<DashBoard> {
                 DrawerHeader(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.indigo.shade100, Colors.indigo.shade300],
+                      colors: [Colors.purple.shade50, Colors.indigo.shade100],
                     ),
                   ),
                   child: Center(
@@ -155,6 +193,56 @@ class _DashBoardState extends State<DashBoard> {
                     await _logout();
                   },
                 ),
+                ListTile(
+                  leading: const Icon(Icons.person_outlined),
+                  title: const Text("View user"),
+                  onTap: () async {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ViewUser(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.person_off_outlined, color: Color(0xFFAB4646),),
+                  title: const Text("Delete user"),
+                  onTap: () async {
+                    Navigator.of(context).pop(); // Close drawer first
+
+                    final shouldDelete = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) =>
+                          AlertDialog(
+                            title: const Text("Delete Account"),
+                            content: const Text(
+                                "Are you sure you want to delete your account? This action cannot be undone."),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: const Text("Delete",
+                                    style: TextStyle(color: Colors.red)),
+                              ),
+                            ],
+                          ),
+                    );
+
+                    if (shouldDelete == true) {
+                      await _deleteUser();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NewUser(),
+                        ),
+                      );
+                    }
+                  }
+                ),
               ],
             ),
           );
@@ -164,7 +252,7 @@ class _DashBoardState extends State<DashBoard> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.indigo.shade100, Colors.indigo.shade200],
+            colors: [Colors.purple.shade50, Colors.indigo.shade100],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -227,7 +315,7 @@ class _DashBoardState extends State<DashBoard> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ModuleRecords(
+                                  builder: (context) => Recordslist(
                                     moduleId: module['_id'],
                                     moduleName: module['name'],
                                   ),
@@ -239,8 +327,8 @@ class _DashBoardState extends State<DashBoard> {
                                 borderRadius: BorderRadius.circular(20),
                                 gradient: LinearGradient(
                                   colors: [
-                                    Colors.indigo.shade50.withOpacity(0.6),
-                                    Colors.indigo.shade100.withOpacity(0.3),
+                                    Colors.purple.shade50,
+                                    Colors.indigo.shade100,
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -293,7 +381,6 @@ class _DashBoardState extends State<DashBoard> {
                                         padding: const EdgeInsets.all(16), // Adjust padding for circular shape
                                       ),
                                     )
-
                                   ),
                                 ],
                               ),

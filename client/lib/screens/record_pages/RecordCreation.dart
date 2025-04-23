@@ -141,7 +141,7 @@ class _RecordCreationState extends State<RecordCreation> {
                       ),
                       const SizedBox(height: 20),
                       ...fields.map((field) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.all(8),
                         child: GradientLabelTextField(
                           controller: controllers[field['name']]!,
                           labelText: field['name'],

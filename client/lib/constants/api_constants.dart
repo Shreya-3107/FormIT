@@ -1,7 +1,7 @@
 // lib/constants/api_constants.dart
 
 class ApiConstants {
-  static const String baseUrl = "http://localhost:3000/api";
+  static const String baseUrl = "https://formit-868t.onrender.com/api";
 
   // Gemini AI call
   static const String suggestModules = "$baseUrl/gemini/suggest-modules";
@@ -11,9 +11,9 @@ class ApiConstants {
   static const String signup = "$baseUrl/auth/signup";
   static const String login = "$baseUrl/auth/login";
   static const String getUserID = "$baseUrl/auth/get-id";
-  static const String getUserDetails = "$baseUrl/auth/user/"; //followed by user id
-  static const String updateUserDetails = "$baseUrl/auth/update/user/"; //followed by user id
-  static const String deleteUser = "$baseUrl/auth/user"; //no need for id cuz of jwt auth token
+  static const String getUserDetails = "$baseUrl/auth/user/getDetails";
+  static const String updateUserDetails = "$baseUrl/auth/user/update";
+  static const String deleteUser = "$baseUrl/auth/user/delete"; //no need for id cuz of jwt auth token
 
   // Organization
   static const String createOrg = "$baseUrl/orgs/create";

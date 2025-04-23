@@ -35,11 +35,14 @@ class _FieldCreationState extends State<FieldCreation> {
 
   Future<void> fetchSuggestedFields() async {
     final prefs = await SharedPreferences.getInstance();
-    final orgId = prefs.getString('orgId');
+    final token = prefs.getString('token');
 
     final response = await http.post(
       Uri.parse(ApiConstants.suggestFields),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode({
         'moduleName': widget.moduleName,
         'description': widget.moduleDescription,

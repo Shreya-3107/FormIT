@@ -24,9 +24,15 @@ class _OrgCreationState extends State<OrgCreation> {
 
   // Fetch module recommendations based on industry and description
   Future<List<Map<String, String>>> fetchRecommendedModules(String industry, String description) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
     final moduleSuggestionResponse = await http.post(
       Uri.parse(ApiConstants.suggestModules),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode({
         'industry': _industryController.text,
         'description': _descriptionController.text,
