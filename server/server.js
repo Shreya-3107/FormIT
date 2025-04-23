@@ -43,4 +43,7 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(err => console.log(err));
 
 const PORT = process.env.PORT || 3000;
+if (!PORT) {
+    throw new Error("❌ PORT not defined! Make sure you're on Render or define PORT manually for local dev.");
+  }
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
