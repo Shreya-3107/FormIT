@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/constants/api_constants.dart';
 import 'package:trial/screens/dashboard/Dashboard.dart';
 import 'package:trial/widgets/GlassContainer.dart';
+import '../field_pages/FieldsList.dart';
 import '../record_pages/RecordCreation.dart';
 import '../record_pages/RecordDetails.dart';
 
@@ -211,24 +212,52 @@ class RecordslistState extends State<Recordslist> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RecordCreation(
-                moduleId: widget.moduleId,
-                moduleName: widget.moduleName,
-              ),
-            ),
-          );
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+            bottom: 8,
+            right: 8,
+            child: Column(
+              children: [
+                FloatingActionButton(
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FieldsList(
+                          moduleId: widget.moduleId,
+                          moduleName: widget.moduleName,
+                        ),
+                      ),
+                    );
+                  },
+                  backgroundColor: Colors.indigo[400],
+                  child: const Icon(Icons.dashboard_rounded, color: Color(0xEEEEEEFF)),
+                ),
+                const SizedBox(height: 10),
+                FloatingActionButton(
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RecordCreation(
+                          moduleId: widget.moduleId,
+                          moduleName: widget.moduleName,
+                        ),
+                      ),
+                    );
 
-          if (result == true) {
-            fetchRecords();
-          }
-        },
-        backgroundColor: Colors.indigo[400],
-        child: const Icon(Icons.add, color: Colors.white),
+                    if (result == true) {
+                      fetchRecords();
+                    }
+                  },
+                  backgroundColor: Colors.indigo[400],
+                  child: const Icon(Icons.add, color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

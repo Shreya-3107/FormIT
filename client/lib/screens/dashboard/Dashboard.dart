@@ -197,6 +197,8 @@ class _DashBoardState extends State<DashBoard> {
                   leading: const Icon(Icons.person_outlined),
                   title: const Text("View user"),
                   onTap: () async {
+                    Navigator.of(context).pop(); // Close drawer first
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -303,7 +305,7 @@ class _DashBoardState extends State<DashBoard> {
                       GridView.builder(
                         itemCount: modules.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: MediaQuery.of(context).size.width < 400 ? 1 : 2,
+                          crossAxisCount: MediaQuery.of(context).size.width < 600 ? 1 : 2,
                           childAspectRatio: 1.1,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
@@ -362,6 +364,24 @@ class _DashBoardState extends State<DashBoard> {
                                         ),
                                       ],
                                     ),
+                                  ),
+                                  Positioned(
+                                      top: 4,
+                                      right: 4,
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          //TODO : module edit
+                                        },
+                                        label: const Icon(
+                                          Icons.edit,
+                                          color: Color(0xEEEEEEFF), // Icon color
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.indigo[400], // Background color of the button
+                                          shape: CircleBorder(), // Makes the button circular
+                                          padding: const EdgeInsets.all(16), // Adjust padding for circular shape
+                                        ),
+                                      )
                                   ),
                                   Positioned(
                                     bottom: 4,

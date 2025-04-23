@@ -95,13 +95,26 @@ class _ViewUserState extends State<ViewUser> {
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     children: [
-                      Text(
-                        "User Details",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.indigo,
-                        ),
+                      Row(
+                        children: [
+                          IconButton(
+                              icon: Icon(Icons.navigate_before),
+                              color: Colors.indigo[800],
+                              onPressed: () => {
+                                Navigator.pop(context)
+                              }
+                          ),
+                          Expanded(
+                            child: Text(
+                              "User Details",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.indigo,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 20),
                       Expanded(

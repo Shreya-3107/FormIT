@@ -120,24 +120,37 @@ class _RecordCreationState extends State<RecordCreation> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const SizedBox(height: 20),
-                      ShaderMask(
-                        shaderCallback: (bounds) {
-                          return const LinearGradient(
-                            colors: [Colors.indigo, Colors.grey],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
-                        },
-                        child: Text(
-                          "New ${widget.moduleName} Record",
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontFamily: 'Pixel',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                      Row(
+                        children: [
+                          IconButton(
+                              icon: Icon(Icons.navigate_before),
+                              color: Colors.indigo[800],
+                              onPressed: () => {
+                                Navigator.pop(context)
+                              }
                           ),
-                          textAlign: TextAlign.center,
-                        ),
+                          Expanded(
+                            child: ShaderMask(
+                              shaderCallback: (bounds) {
+                                return const LinearGradient(
+                                  colors: [Colors.indigo, Colors.grey],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                              },
+                              child: Text(
+                                "New ${widget.moduleName} Record",
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontFamily: 'Pixel',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20),
                       ...fields.map((field) => Padding(

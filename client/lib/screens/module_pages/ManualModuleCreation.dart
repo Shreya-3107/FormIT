@@ -105,23 +105,36 @@ class _ManualModuleCreationState extends State<ManualModuleCreation> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             const SizedBox(height: 40),
-                            ShaderMask(
-                              shaderCallback: (bounds) {
-                                return LinearGradient(
-                                  colors: [Colors.indigo, Colors.grey],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
-                              },
-                              child: Text(
-                                "Create Module",
-                                style: const TextStyle(
-                                  fontSize: 28,
-                                  fontFamily: 'Pixel',
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                            Row(
+                              children: [
+                                IconButton(
+                                    icon: Icon(Icons.navigate_before),
+                                    color: Colors.indigo[800],
+                                    onPressed: () => {
+                                      Navigator.pop(context)
+                                    }
                                 ),
-                              ),
+                                Expanded(
+                                  child: ShaderMask(
+                                    shaderCallback: (bounds) {
+                                      return LinearGradient(
+                                        colors: [Colors.indigo, Colors.grey],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                                    },
+                                    child: Text(
+                                      "Create Module",
+                                      style: const TextStyle(
+                                        fontSize: 28,
+                                        fontFamily: 'Pixel',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 20),
                             TextField(
