@@ -125,5 +125,53 @@ router.post('/suggest-fields', authMiddleware, async (req, res) => {
   }
 });
 
+router.post('/suggest-field-values', authMiddleware, async (req, res) => {
+  const { name, type, moduleName, orgName, orgDescription } = req.body;
+
+  if (!name || !type || !moduleName || !orgName || !orgDescription) {
+    return res.status(400).json({ message: 'Field name, Field type, Module name, Organization name and Organization description are required' });
+  }
+
+  try {
+    const geminiResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text:
+                    'Imagine you are an expert consultant. Based on the following details, suggest a suitable value. ' +
+                    `Org name: ${orgName}, Org description: ${orgDescription}, Module name: ${moduleName}, Field name: ${name}, Field datatype: ${type}. ` +
+                    'Based on the given details suggest a suitable value. ' +
+                    'No additional text should be given in the response. ' +
+                    'Text response should strictly contain only the value. Suggest 1 optimum value suggestion. '
+                }
+              ]
+            }
+          ]
+        }),
+      }
+    );
+
+    const geminiData = await geminiResponse.json();
+
+    // Safely extract the text
+    const suggestedValue = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+    if (!suggestedValue) {
+      return res.status(500).json({ message: 'Failed to get a suggested value from AI' });
+    }
+
+    res.json({ value: suggestedValue });
+  } catch (error) {
+    console.error('Error suggesting field value:', error);
+    res.status(500).json({ message: 'Error suggesting field value', error: error.message });
+  }
+});
+
 
 module.exports = router;
