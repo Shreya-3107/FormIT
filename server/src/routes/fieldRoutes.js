@@ -54,7 +54,7 @@ router.put('/update/:fieldId', authMiddleware, async (req, res) => {
   try {
     const { name, type } = req.body;
 
-    const field = await Field.find(req.params.fieldId);
+    const field = await Field.findById(req.params.fieldId);
 
     field.name = name || field.name;
     field.type = type || field.type;
