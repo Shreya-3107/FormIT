@@ -128,8 +128,8 @@ router.post('/suggest-fields', authMiddleware, async (req, res) => {
 router.post('/suggest-field-values', authMiddleware, async (req, res) => {
   const { name, type, moduleName, orgName, orgDescription } = req.body;
 
-  if (!name || !type || !moduleName || !orgName || !orgDescription) {
-    return res.status(400).json({ message: 'Field name, Field type, Module name, Organization name and Organization description are required' });
+  if (!name || !type || !moduleName || !orgName) {
+    return res.status(400).json({ message: 'Field name, Field type, Module name, Organization name are required' });
   }
 
   try {
