@@ -79,10 +79,12 @@ class _OrgCreationState extends State<OrgCreation> {
       final orgMap = responseData['org'];
       final orgId = orgMap['_id'];
       final orgName = orgMap['orgName'];
+      final orgDescription = orgMap['description'];
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('orgId', orgId);
       await prefs.setString('orgName', orgName);
+      await prefs.setString('orgDescription', orgDescription);
 
       try {
         List<Map<String, String>> recommendedModules = await fetchRecommendedModules(

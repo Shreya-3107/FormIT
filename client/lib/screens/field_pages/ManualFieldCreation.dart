@@ -131,6 +131,7 @@ class _ManualFieldCreationState extends State<ManualFieldCreation> {
                       GradientLabelTextField(
                         controller: TextEditingController(text: 'text'),
                         labelText: 'Field Type',
+                        enabled: false,
                       ),
 
                       const SizedBox(height: 24),

@@ -6,6 +6,7 @@ class ApiConstants {
   // Gemini AI call
   static const String suggestModules = "$baseUrl/gemini/suggest-modules";
   static const String suggestFields = "$baseUrl/gemini/suggest-fields";
+  static const String suggestFieldValues = "$baseUrl/gemini/suggest-field-values";
 
   // Auth
   static const String signup = "$baseUrl/auth/signup";

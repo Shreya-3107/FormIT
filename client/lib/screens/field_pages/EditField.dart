@@ -160,8 +160,8 @@ class _EditFieldsPageState extends State<EditFieldsPage> {
                         GradientLabelTextField(
                           controller: TextEditingController(text: widget.fieldType),
                           labelText: 'Field Type',
-                          // readOnly: true,
-                          // enabled: false,
+                          readOnly: true,
+                          enabled: false,
                           validator: (_) => null,
                         ),
 

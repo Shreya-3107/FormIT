@@ -27,6 +27,42 @@ class _RecordCreationState extends State<RecordCreation> {
     fetchFields();
   }
 
+  void suggestFieldValue(String fieldName, String fieldType) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final orgName = prefs.getString('orgName');
+    final orgDescription = prefs.getString('orgDescription');
+
+    if (token == null) return;
+
+    final response = await http.post(
+      Uri.parse(ApiConstants.suggestFieldValues),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({
+        "name": fieldName,
+        "type": fieldType,
+        "moduleName": widget.moduleName,
+        "orgName": orgName,
+        "orgDescription": orgDescription
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final suggestion = data['value'] ?? '';
+
+      setState(() {
+        controllers[fieldName]?.text = suggestion;
+      });
+    } else {
+      print("Failed to suggest field value: ${response.body}");
+    }
+  }
+
+
   Future<void> fetchFields() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -51,9 +87,11 @@ class _RecordCreationState extends State<RecordCreation> {
       setState(() {
         fields = fieldList.map((f) => {
           'name': f['name'],
+          'type': f['type'],
         }).toList();
         for (var field in fields) {
           controllers[field['name']] = TextEditingController();
+          controllers[field['type']] = TextEditingController();
         }
         isLoading = false;
       });
@@ -158,8 +196,13 @@ class _RecordCreationState extends State<RecordCreation> {
                         child: GradientLabelTextField(
                           controller: controllers[field['name']]!,
                           labelText: field['name'],
+                          suffixIcon: IconButton(
+                              icon: Icon(Icons.lightbulb_outline_rounded),
+                              onPressed: () => suggestFieldValue(field['name'], field['type']),
+                              color: Colors.indigo),
                         ),
                       )),
+
                       const SizedBox(height: 20),
                       GestureDetector(
                         onTap: submitRecord,
