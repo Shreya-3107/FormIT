@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trial/widgets/GlassContainer.dart';
+import 'package:FormIT/widgets/GlassContainer.dart';
 import 'OrgCreation.dart';
 
 class OrgSelection extends StatefulWidget {
@@ -84,11 +84,18 @@ class _OrgSelectionState extends State<OrgSelection> {
                                     color: Colors.black87,
                                   ),
                                 ),
-                                const SizedBox(height: 6),
+                                Text(
+                                  'Description: ' + org['description'],
+                                  style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 16
+                                  )
+                                ),
+                                const SizedBox(height: 6,),
                                 Text(
                                   'Tap to select this organization',
                                   style: TextStyle(
-                                    color: Colors.black54,
+                                    color: Colors.black45,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -106,6 +113,7 @@ class _OrgSelectionState extends State<OrgSelection> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: null,
         onPressed: () async {
           await Navigator.push(
             context,

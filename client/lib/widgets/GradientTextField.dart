@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
-
 class GradientLabelTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
-  final int maxLines;
+  final int? minLines;
   final bool obscureText;
+  final String? Function(String?)? validator;
 
   const GradientLabelTextField({
     Key? key,
     required this.controller,
     required this.labelText,
-    this.maxLines = 1,
+    this.minLines,
     this.obscureText = false,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -33,9 +34,11 @@ class GradientLabelTextField extends StatelessWidget {
           ),
         ],
       ),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
-        maxLines: maxLines,
+        validator: validator,
+        minLines: minLines ?? 1,
+        maxLines: obscureText ? 1 : null, // null allows it to expand
         obscureText: obscureText,
         style: TextStyle(color: Colors.indigo),
         decoration: InputDecoration(

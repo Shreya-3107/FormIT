@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trial/screens/org_pages/OrgSelection.dart';
+import 'package:FormIT/screens/org_pages/OrgSelection.dart';
 import '../../constants/api_constants.dart';
 import '../../widgets/GlassContainer.dart';
 import '../../widgets/GradientTextField.dart';

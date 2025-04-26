@@ -196,7 +196,7 @@ class _OrgCreationState extends State<OrgCreation> {
                       GradientLabelTextField(
                         controller: _descriptionController,
                         labelText: 'Description',
-                        maxLines: 3,
+                        minLines: 3,
                       ),
                       const SizedBox(height: 10),
                       GestureDetector(

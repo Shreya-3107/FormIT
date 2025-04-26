@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart'; // For storing JWT
-import '../module_pages//ModuleCreation.dart'; // Adjust this to your correct import for ModuleCreation
 import '../../constants/api_constants.dart';
 import '../../widgets/GlassContainer.dart';
 import '../../widgets/GradientTextField.dart';
@@ -17,6 +16,7 @@ class NewUser extends StatefulWidget {
 
 class _NewUserState extends State<NewUser> {
   double _scale = 1.0;
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
@@ -172,89 +172,118 @@ class _NewUserState extends State<NewUser> {
               child: Padding(
                 padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      const SizedBox(height: 40),
-                      ShaderMask(
-                        shaderCallback: (bounds) {
-                          return LinearGradient(
-                            colors: [Colors.indigo, Colors.grey],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
-                        },
-                        child: Text(
-                          "Sign Up",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontFamily: 'Pixel',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const SizedBox(height: 40),
+                        ShaderMask(
+                          shaderCallback: (bounds) {
+                            return LinearGradient(
+                              colors: [Colors.indigo, Colors.grey],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                          },
+                          child: Text(
+                            "Sign Up",
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontFamily: 'Pixel',
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      GradientLabelTextField(controller: _nameController, labelText: 'Full Name'),
-                      const SizedBox(height: 10),
-                      GradientLabelTextField(controller: _emailController, labelText: 'Email'),
-                      const SizedBox(height: 10),
-                      GradientLabelTextField(controller: _usernameController, labelText: 'Username'),
-                      const SizedBox(height: 10),
-                      GradientLabelTextField(
-                        controller: _passwordController,
-                        labelText: 'Password',
-                        obscureText: true,
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Already have an account? ", style: TextStyle(color: Colors.grey.shade700)),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/login');
-                            },
-                            child: Text(
-                              "Login here",
-                              style: TextStyle(
-                                color: Colors.indigo,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      GestureDetector(
-                        onTap: createUser,
-                        onTapDown: (_) => setState(() => _scale = 0.9),
-                        onTapUp: (_) => setState(() => _scale = 1.0),
-                        onTapCancel: () => setState(() => _scale = 1.0),
-                        child: Transform.scale(
-                          scale: _scale,
-                          child: Container(
-                            width: 200,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Colors.indigo.shade400, Colors.indigo.shade200],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
+                        const SizedBox(height: 20),
+                        GradientLabelTextField(
+                          controller: _nameController,
+                          labelText: 'Full Name',
+                          validator: (value) => value == null || value.isEmpty ? 'Please enter your name' : null,
+                        ),
+                        const SizedBox(height: 10),
+                        GradientLabelTextField(
+                          controller: _emailController,
+                          labelText: 'Email',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) return 'Please enter email';
+                            final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                            if (!emailRegex.hasMatch(value)) return 'Enter valid email';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        GradientLabelTextField(
+                          controller: _usernameController,
+                          labelText: 'Username',
+                          validator: (value) => value == null || value.isEmpty ? 'Please enter username' : null,
+                        ),
+                        const SizedBox(height: 10),
+                        GradientLabelTextField(
+                          controller: _passwordController,
+                          labelText: 'Password',
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) return 'Enter password';
+                            if (value.length < 6) return 'Password too short';
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Already have an account? ", style: TextStyle(color: Colors.grey.shade700)),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/login');
+                              },
                               child: Text(
-                                'Create Account',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                                "Login here",
+                                style: TextStyle(
+                                  color: Colors.indigo,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            if (_formKey.currentState!.validate()) {
+                              createUser();
+                            }
+                          },
+                          onTapDown: (_) => setState(() => _scale = 0.9),
+                          onTapUp: (_) => setState(() => _scale = 1.0),
+                          onTapCancel: () => setState(() => _scale = 1.0),
+                          child: Transform.scale(
+                            scale: _scale,
+                            child: Container(
+                              width: 200,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Colors.indigo.shade400, Colors.indigo.shade200],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Create Account',
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

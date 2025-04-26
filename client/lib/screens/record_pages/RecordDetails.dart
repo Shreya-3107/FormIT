@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trial/screens/record_pages/RecordsList.dart';
+import 'package:FormIT/screens/record_pages/RecordsList.dart';
 import '../../constants/api_constants.dart';
+import 'EditRecord.dart';
 
 class RecordDetailsPage extends StatefulWidget {
   final String moduleId;
@@ -235,9 +236,25 @@ class _RecordDetailsPageState extends State<RecordDetailsPage> {
             child: Column(
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {
-                    //TODO: decide this
+                  onPressed: () async {
+                    final updated = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditRecordPage(
+                          moduleId: widget.moduleId,
+                          recordId: widget.recordId,
+                          moduleName: widget.moduleName,
+                          fieldData: fieldData,
+                        ),
+                      ),
+                    );
+
+                    if (updated == true) {
+                      fetchRecordDetails(); // your method to reload the record!
+                    }
+
                   },
+
                   label: const Icon(
                     Icons.edit,
                     color: Color(0xEEEEEEFF), // Icon color

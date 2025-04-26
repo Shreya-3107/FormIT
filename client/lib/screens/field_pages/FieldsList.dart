@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/api_constants.dart';
 import '../../widgets/GlassContainer.dart';
+import 'EditField.dart';
+import 'ManualFieldCreation.dart';
 
 class FieldsList extends StatefulWidget {
   final String moduleId;
@@ -23,6 +25,58 @@ class _FieldsListState extends State<FieldsList> {
   void initState() {
     super.initState();
     fetchFields();
+  }
+
+  Future<void> _confirmDelete(BuildContext context, String fieldId) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Delete Field"),
+        content: const Text("Are you sure you want to delete this field?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete == true) {
+      await _deleteField(fieldId);
+    }
+  }
+
+  Future<void> _deleteField(String fieldId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token == null) return;
+
+    final response = await http.delete(
+      Uri.parse(ApiConstants.deleteField + fieldId),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _fields.removeWhere((field) => field['_id'] == fieldId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("field deleted")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to delete field")),
+      );
+    }
   }
 
   Future<void> fetchFields() async {
@@ -142,11 +196,39 @@ class _FieldsListState extends State<FieldsList> {
                                   ),
                                 ],
                               ),
-                              FloatingActionButton.small(
-                                onPressed: () => {},
-                                backgroundColor: Colors.indigo[400],
-                                child: const Icon(Icons.edit, color: Color(0xEEEEEEFF)),
-                              ),
+                              Row(
+                                children: [
+                                  FloatingActionButton.small(
+                                    onPressed: () async {
+                                      final updated = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => EditFieldsPage(
+                                              fieldId: field['_id'],
+                                              initialFieldName: field['name'],
+                                              fieldType: field['type'],
+                                            ),
+                                        ),
+                                      );
+
+                                      if(updated){
+                                        fetchFields();
+                                      }
+                                    },
+                                    backgroundColor: Colors.indigo[400],
+                                    child: const Icon(Icons.edit, color: Color(0xEEEEEEFF)),
+                                  ),
+                                  SizedBox(width: 5,),
+                                  FloatingActionButton.small(
+                                    onPressed: () {
+                                      FocusScope.of(context).unfocus();
+                                      _confirmDelete(context, field['_id']);
+                                    },
+                                    backgroundColor: Color(0xFFAB4646),
+                                    child: const Icon(Icons.delete, color: Color(0xEEEEEEFF)),
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         );
@@ -160,7 +242,21 @@ class _FieldsListState extends State<FieldsList> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
+        heroTag: null,
+        onPressed: () async {
+          final created = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ManualFieldCreation(
+                moduleId: widget.moduleId,
+              ),
+            ),
+          );
+
+          if (created == true) {
+            fetchFields(); // refresh fields list after creation
+          }
+        },
         backgroundColor: Colors.indigo[400],
         child: const Icon(Icons.add, color: Colors.white),
       ),

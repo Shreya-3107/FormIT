@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trial/constants/api_constants.dart';
-import 'package:trial/screens/dashboard/Dashboard.dart';
-import 'package:trial/widgets/GlassContainer.dart';
+import 'package:FormIT/constants/api_constants.dart';
+import 'package:FormIT/screens/dashboard/Dashboard.dart';
+import 'package:FormIT/widgets/GlassContainer.dart';
 import '../field_pages/FieldsList.dart';
 import '../record_pages/RecordCreation.dart';
 import '../record_pages/RecordDetails.dart';
@@ -220,8 +220,9 @@ class RecordslistState extends State<Recordslist> {
             child: Column(
               children: [
                 FloatingActionButton(
+                  heroTag: null,
                   onPressed: () async {
-                    final result = await Navigator.push(
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => FieldsList(
@@ -236,6 +237,7 @@ class RecordslistState extends State<Recordslist> {
                 ),
                 const SizedBox(height: 10),
                 FloatingActionButton(
+                  heroTag: null,
                   onPressed: () async {
                     final result = await Navigator.push(
                       context,

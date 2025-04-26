@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trial/constants/api_constants.dart';
+import 'package:FormIT/constants/api_constants.dart';
 import '../../widgets/GlassContainer.dart';
+import 'EditUser.dart';
 
 class ViewUser extends StatefulWidget {
   @override
@@ -77,50 +78,61 @@ class _ViewUserState extends State<ViewUser> {
   }
 
   Widget _buildUserProfile() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Container(
-            decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.purple.shade50, Colors.indigo.shade100],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              ),
-            ),
-            height: MediaQuery.of(context).size.height,
-            child: Center(
-              child: GlassContainer(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                              icon: Icon(Icons.navigate_before),
-                              color: Colors.indigo[800],
-                              onPressed: () => {
-                                Navigator.pop(context)
-                              }
-                          ),
-                          Expanded(
-                            child: Text(
-                              "User Details",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.indigo,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.purple.shade50, Colors.indigo.shade100],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      height: MediaQuery.of(context).size.height,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              // Main content area with glass effect
+              Expanded(
+                child: GlassContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            IconButton(
+                                icon: Icon(Icons.navigate_before),
+                                color: Colors.indigo[800],
+                                onPressed: () => Navigator.pop(context)
+                            ),
+                            Expanded(
+                              child: ShaderMask(
+                                shaderCallback: (bounds) {
+                                  return const LinearGradient(
+                                    colors: [Colors.indigo, Colors.grey],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                                },
+                                child: const Text(
+                                  "View User",
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontFamily: 'Pixel',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        // Fields displayed with fixed height instead of Expanded
+                        Column(
+                          children: List.generate(3, (index) {
                             final field = fields[index];
                             final fieldKey = userMapKeys[index];
                             return Container(
@@ -150,44 +162,73 @@ class _ViewUserState extends State<ViewUser> {
                                 ],
                               ),
                             );
-                          },
+                          }),
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      GestureDetector(
-                        onTap: () => {
-                          //TODO: Edit user
-                        },
-                        onTapDown: (_) => setState(() => _scale = 0.9),
-                        onTapUp: (_) => setState(() => _scale = 1.0),
-                        onTapCancel: () => setState(() => _scale = 1.0),
-                        child: Transform.scale(
-                          scale: _scale,
-                          child: Container(
-                            width: 150,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Colors.indigo.shade300, Colors.indigo.shade100],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Edit User',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                        // Spacer pushes the button to the bottom
+                        Spacer(),
+                        // Edit button at the bottom center
+                        Center(
+                          child: GestureDetector(
+                            onTap: ()  async {
+                              final updated = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => EditUser(
+                                    initialName: userDetails['name'],
+                                    initialEmail: userDetails['email'],
+                                    initialUsername: userDetails['username'],
+                                  ),
+                                ),
+                              );
+
+                              if (updated == true) {
+                                _fetchUserDetails(); // your method to reload the record!
+                              }
+                            },
+                            onTapDown: (_) => setState(() => _scale = 0.9),
+                            onTapUp: (_) => setState(() => _scale = 1.0),
+                            onTapCancel: () => setState(() => _scale = 1.0),
+                            child: Transform.scale(
+                              scale: _scale,
+                              child: Container(
+                                width: 150,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [Colors.indigo.shade400, Colors.indigo.shade200],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.indigo.withOpacity(0.3),
+                                      blurRadius: 8,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Edit User',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
+          ),
         ),
       ),
     );

@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trial/constants/api_constants.dart';
-import 'package:trial/screens/dashboard/Dashboard.dart';
-import 'package:trial/screens/field_pages/FieldCreation.dart';
-import 'package:trial/widgets/GlassContainer.dart';
+import 'package:FormIT/constants/api_constants.dart';
+import 'package:FormIT/screens/dashboard/Dashboard.dart';
+import 'package:FormIT/screens/field_pages/FieldCreation.dart';
+import 'package:FormIT/widgets/GlassContainer.dart';
 
 class ModuleCreation extends StatefulWidget {
   final List<Map<String, String>> modules;
@@ -100,7 +100,7 @@ class _ModuleCreationState extends State<ModuleCreation> {
                           ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
                         },
                         child: Text(
-                          "Select Modules",
+                          "AI Module Suggestions",
                           style: TextStyle(
                             fontSize: 28,
                             fontFamily: 'Pixel',

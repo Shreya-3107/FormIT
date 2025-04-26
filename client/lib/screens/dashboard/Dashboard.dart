@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trial/constants/api_constants.dart';
-import 'package:trial/screens/module_pages/ManualModuleCreation.dart';
-import 'package:trial/screens/record_pages/RecordsList.dart';
+import 'package:FormIT/constants/api_constants.dart';
+import 'package:FormIT/screens/module_pages/EditModule.dart';
+import 'package:FormIT/screens/module_pages/ManualModuleCreation.dart';
+import 'package:FormIT/screens/record_pages/RecordsList.dart';
 import '../../widgets/GlassContainer.dart';
 import '../auth_pages/NewUser.dart';
 import '../auth_pages/ViewUser.dart';
@@ -25,7 +26,7 @@ class _DashBoardState extends State<DashBoard> {
   @override
   void initState() {
     super.initState();
-    fetchModulesAndOrg();
+    fetchModulesForOrg();
   }
 
   Future<void> _logout() async {
@@ -123,7 +124,7 @@ class _DashBoardState extends State<DashBoard> {
     }
   }
 
-  Future<void> fetchModulesAndOrg() async {
+  Future<void> fetchModulesForOrg() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final orgId = prefs.getString('orgId');
@@ -142,7 +143,7 @@ class _DashBoardState extends State<DashBoard> {
     }
 
     final response = await http.get(
-      Uri.parse(ApiConstants.getModulesForOrg + orgId!),
+      Uri.parse(ApiConstants.getModulesForOrg + orgId),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -369,9 +370,23 @@ class _DashBoardState extends State<DashBoard> {
                                       top: 4,
                                       right: 4,
                                       child: ElevatedButton.icon(
-                                        onPressed: () {
-                                          //TODO : module edit
+                                        onPressed: () async {
+                                          final updated = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => EditModule(
+                                                moduleId: module['_id'], // <-- Your actual variable here
+                                                currentName: module['name'], // <-- Your actual variable here
+                                                currentDescription: module['description'], // <-- Your actual variable here
+                                              ),
+                                            ),
+                                          );
+
+                                          if (updated == true) {
+                                            fetchModulesForOrg(); // your method to reload the record!
+                                          }
                                         },
+
                                         label: const Icon(
                                           Icons.edit,
                                           color: Color(0xEEEEEEFF), // Icon color
@@ -419,6 +434,7 @@ class _DashBoardState extends State<DashBoard> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(16.0), // Adjust the margin around the button
         child: FloatingActionButton(
+          heroTag: null,
           onPressed: () async {
             final result = await Navigator.push(
               context,
@@ -428,7 +444,7 @@ class _DashBoardState extends State<DashBoard> {
             );
 
             if (result == true) {
-              fetchModulesAndOrg(); // refresh modules after successful creation
+              fetchModulesForOrg(); // refresh modules after successful creation
             }
           },
 
