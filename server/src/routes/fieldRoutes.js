@@ -72,7 +72,7 @@ router.delete('/delete/:fieldId', authMiddleware, async (req, res) => {
   try {
     const { fieldId } = req.params;
 
-    const deleted = await Field.findOneAndDelete(fieldId);
+    const deleted = await Field.findOneAndDelete({ fieldId: fieldId });
 
     if (!deleted) {
       return res.status(404).json({ message: 'Field not found or org mismatch' });
