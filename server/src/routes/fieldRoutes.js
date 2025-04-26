@@ -54,7 +54,7 @@ router.put('/update/:fieldId', authMiddleware, async (req, res) => {
   try {
     const { name, type } = req.body;
 
-    const field = await Field.findById(req.params.fieldId);
+    const field = await Field.find(req.params.fieldId);
 
     field.name = name || field.name;
     field.type = type || field.type;
@@ -72,7 +72,7 @@ router.delete('/delete/:fieldId', authMiddleware, async (req, res) => {
   try {
     const { fieldId } = req.params;
 
-    const deleted = await Field.findOneAndDelete({ fieldId: fieldId });
+    const deleted = await Field.findOneAndDelete({ _id: fieldId });
 
     if (!deleted) {
       return res.status(404).json({ message: 'Field not found or org mismatch' });
