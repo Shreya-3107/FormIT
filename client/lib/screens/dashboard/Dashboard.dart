@@ -367,37 +367,57 @@ class _DashBoardState extends State<DashBoard> {
                                     ),
                                   ),
                                   Positioned(
-                                      top: 4,
-                                      right: 4,
-                                      child: ElevatedButton.icon(
-                                        onPressed: () async {
-                                          final updated = await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => EditModule(
-                                                moduleId: module['_id'], // <-- Your actual variable here
-                                                currentName: module['name'], // <-- Your actual variable here
-                                                currentDescription: module['description'], // <-- Your actual variable here
-                                              ),
+                                    top: 4,
+                                    right: 4,
+                                    child: ElevatedButton.icon(
+                                      onPressed: () async {
+                                        final updated = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => EditModule(
+                                              moduleId: module['_id'], // <-- Your actual variable here
+                                              currentName: module['name'], // <-- Your actual variable here
+                                              currentDescription: module['description'], // <-- Your actual variable here
                                             ),
-                                          );
+                                          ),
+                                        );
 
-                                          if (updated == true) {
-                                            fetchModulesForOrg(); // your method to reload the record!
-                                          }
-                                        },
-
-                                        label: const Icon(
-                                          Icons.edit,
-                                          color: Color(0xEEEEEEFF), // Icon color
+                                        if (updated == true) {
+                                          fetchModulesForOrg(); // Your method to reload the record!
+                                        }
+                                      },
+                                      label: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.edit_outlined,
+                                            color: Colors.white,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          const Text(
+                                            'Edit',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500,
+                                              letterSpacing: 0.2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.indigo[400], // Background color of the button
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(50), // Rounded button corners
                                         ),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.indigo[400], // Background color of the button
-                                          shape: CircleBorder(), // Makes the button circular
-                                          padding: const EdgeInsets.all(16), // Adjust padding for circular shape
-                                        ),
-                                      )
+                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16), // Adjust padding for a balanced look
+                                        shadowColor: Colors.indigo.shade700, // Adds shadow for depth
+                                        elevation: 5, // Slight elevation for a floating effect
+                                      ),
+                                    ),
                                   ),
+
                                   Positioned(
                                     bottom: 4,
                                     left: 4,
@@ -432,9 +452,8 @@ class _DashBoardState extends State<DashBoard> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.all(16.0), // Adjust the margin around the button
-        child: FloatingActionButton(
-          heroTag: null,
+        padding: const EdgeInsets.all(16.0),
+        child: FloatingActionButton.extended(
           onPressed: () async {
             final result = await Navigator.push(
               context,
@@ -447,11 +466,19 @@ class _DashBoardState extends State<DashBoard> {
               fetchModulesForOrg(); // refresh modules after successful creation
             }
           },
-
-          backgroundColor: Colors.indigo[400], // Background color
-          child: const Icon(
-            Icons.add,
-            color: Colors.white, // White color for the icon
+          backgroundColor: Colors.indigo[400],
+          elevation: 4,
+          icon: const Icon(
+            Icons.add_circle_outline,
+            color: Colors.white,
+          ),
+          label: const Text(
+            'New Module',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
           ),
         ),
       ),

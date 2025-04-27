@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:formit/widgets/GradientTextField.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:formit/screens/dashboard/Dashboard.dart';
@@ -137,29 +138,14 @@ class _ManualModuleCreationState extends State<ManualModuleCreation> {
                               ],
                             ),
                             const SizedBox(height: 20),
-                            TextField(
-                              controller: _nameController,
-                              decoration: const InputDecoration(
+                            GradientLabelTextField(
+                                controller: _nameController,
                                 labelText: "Module Name",
-                                labelStyle: TextStyle(color: Colors.indigo),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.indigo),
-                                ),
-                              ),
-                              style: const TextStyle(color: Colors.indigo),
                             ),
                             const SizedBox(height: 16),
-                            TextField(
-                              controller: _descController,
-                              decoration: const InputDecoration(
+                            GradientLabelTextField(
+                                controller: _descController,
                                 labelText: "Module Description",
-                                labelStyle: TextStyle(color: Colors.indigo),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.indigo),
-                                ),
-                              ),
-                              style: const TextStyle(color: Colors.indigo),
-                              maxLines: 3,
                             ),
                             const SizedBox(height: 30),
                             if (_isLoading)
@@ -173,7 +159,7 @@ class _ManualModuleCreationState extends State<ManualModuleCreation> {
                                 child: Transform.scale(
                                   scale: _scale,
                                   child: Container(
-                                    width: double.infinity,
+                                    width: 200,
                                     height: 50,
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(

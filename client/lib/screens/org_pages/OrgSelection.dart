@@ -50,7 +50,19 @@ class _OrgSelectionState extends State<OrgSelection> {
                 const SizedBox(height: 20),
                 Expanded(
                   child: GlassContainer(
-                    child: ListView.builder(
+                    child: widget.orgs.isEmpty
+                        ? Center(
+                            child: Text(
+                              'Click on the plus icon to create your first organization',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black54,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                    )
+                    : ListView.builder(
                       itemCount: widget.orgs.length,
                       itemBuilder: (context, index) {
                         final org = widget.orgs[index];
@@ -88,10 +100,10 @@ class _OrgSelectionState extends State<OrgSelection> {
                                   'Description: ' + org['description'],
                                   style: const TextStyle(
                                     color: Colors.black54,
-                                    fontSize: 16
-                                  )
+                                    fontSize: 16,
+                                  ),
                                 ),
-                                const SizedBox(height: 6,),
+                                const SizedBox(height: 6),
                                 Text(
                                   'Tap to select this organization',
                                   style: TextStyle(
@@ -112,8 +124,7 @@ class _OrgSelectionState extends State<OrgSelection> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: null,
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await Navigator.push(
             context,
@@ -123,7 +134,19 @@ class _OrgSelectionState extends State<OrgSelection> {
           );
         },
         backgroundColor: Colors.indigo[400],
-        child: const Icon(Icons.add, color: Colors.white),
+        elevation: 4,
+        icon: const Icon(
+          Icons.business_rounded,
+          color: Colors.white,
+        ),
+        label: const Text(
+          'New Organization',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+            fontSize: 15,
+          ),
+        ),
       ),
     );
   }

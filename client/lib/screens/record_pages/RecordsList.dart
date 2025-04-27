@@ -212,54 +212,75 @@ class RecordslistState extends State<Recordslist> {
           ),
         ),
       ),
-      floatingActionButton: Stack(
-        children: [
-          Positioned(
-            bottom: 8,
-            right: 8,
-            child: Column(
-              children: [
-                FloatingActionButton(
-                  heroTag: null,
-                  onPressed: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FieldsList(
-                          moduleId: widget.moduleId,
-                          moduleName: widget.moduleName,
-                        ),
-                      ),
-                    );
-                  },
-                  backgroundColor: Colors.indigo[400],
-                  child: const Icon(Icons.dashboard_rounded, color: Color(0xEEEEEEFF)),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            FloatingActionButton.extended(
+              heroTag: 'viewFields',
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FieldsList(
+                      moduleId: widget.moduleId,
+                      moduleName: widget.moduleName,
+                    ),
+                  ),
+                );
+              },
+              backgroundColor: Colors.indigo[400],
+              elevation: 4,
+              icon: const Icon(
+                Icons.dashboard_rounded,
+                color: Colors.white,
+              ),
+              label: const Text(
+                'View Fields',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
                 ),
-                const SizedBox(height: 10),
-                FloatingActionButton(
-                  heroTag: null,
-                  onPressed: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RecordCreation(
-                          moduleId: widget.moduleId,
-                          moduleName: widget.moduleName,
-                        ),
-                      ),
-                    );
-
-                    if (result == true) {
-                      fetchRecords();
-                    }
-                  },
-                  backgroundColor: Colors.indigo[400],
-                  child: const Icon(Icons.add, color: Colors.white),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            FloatingActionButton.extended(
+              heroTag: 'newRecord',
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RecordCreation(
+                      moduleId: widget.moduleId,
+                      moduleName: widget.moduleName,
+                    ),
+                  ),
+                );
+
+                if (result == true) {
+                  fetchRecords();
+                }
+              },
+              backgroundColor: Colors.indigo[400],
+              elevation: 4,
+              icon: const Icon(
+                Icons.add_circle_outline,
+                color: Colors.white,
+              ),
+              label: const Text(
+                'New Record',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

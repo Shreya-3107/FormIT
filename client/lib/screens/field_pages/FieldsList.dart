@@ -241,8 +241,7 @@ class _FieldsListState extends State<FieldsList> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: null,
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final created = await Navigator.push(
             context,
@@ -258,7 +257,19 @@ class _FieldsListState extends State<FieldsList> {
           }
         },
         backgroundColor: Colors.indigo[400],
-        child: const Icon(Icons.add, color: Colors.white),
+        elevation: 4,
+        icon: const Icon(
+          Icons.add_circle_outline,
+          color: Colors.white,
+        ),
+        label: const Text(
+          'New Field',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+            fontSize: 15,
+          ),
+        ),
       ),
     );
   }
