@@ -1,4 +1,4 @@
-name: FormIT
+name: formit
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -52,6 +52,8 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
+  web:
+    generate: true
   image_path: "assets/smol-logo.png"
   
 

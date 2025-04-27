@@ -1,0 +1,2 @@
+/Users/Shreya/Desktop/FormIT/client/android/app/.cxx/RelWithDebInfo/5s4v4s5u/x86_64/CMakeFiles/edit_cache.dir
+/Users/Shreya/Desktop/FormIT/client/android/app/.cxx/RelWithDebInfo/5s4v4s5u/x86_64/CMakeFiles/rebuild_cache.dir

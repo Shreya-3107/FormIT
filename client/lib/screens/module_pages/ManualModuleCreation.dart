@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:FormIT/screens/dashboard/Dashboard.dart';
-import 'package:FormIT/constants/api_constants.dart';
+import 'package:formit/screens/dashboard/Dashboard.dart';
+import 'package:formit/constants/api_constants.dart';
 import '../field_pages/FieldCreation.dart';
 import '../../widgets/GlassContainer.dart';
 

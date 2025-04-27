@@ -1,4 +1,4 @@
-import 'package:FormIT/main.dart';
+import 'package:formit/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -70,7 +70,7 @@ class _SplashscreenState extends State<Splashscreen>
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff3e2a69), Colors.purple],
+            colors: [Color(0xff3e4f88), Color(0xff6474a3), Color(0xff7c8cb2), Color(0xffa3accb) ,Colors.grey.shade300],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -78,7 +78,9 @@ class _SplashscreenState extends State<Splashscreen>
         child: Center(
           child: FadeTransition(
             opacity: _opacityAnimation,
-            child: Image.asset('assets/Big-logo.png'),
+            child: Image.asset(
+                'assets/Big-logo.png'
+            ),
           ),
         ),
       ),

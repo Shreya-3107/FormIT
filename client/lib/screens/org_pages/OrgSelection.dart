@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:FormIT/widgets/GlassContainer.dart';
+import 'package:formit/widgets/GlassContainer.dart';
 import 'OrgCreation.dart';
 
 class OrgSelection extends StatefulWidget {
