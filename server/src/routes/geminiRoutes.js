@@ -151,7 +151,7 @@ router.post('/suggest-field-values', authMiddleware, async (req, res) => {
                     'Based on the given details suggest a suitable value. ' +
                     'No additional text should be given in the response. ' +
                     'Text response should strictly contain only the value. Suggest 1 optimum value suggestion. ' +
-                    'Suggest unique values every time.'
+                    'Suggest unique values after every prompt. Dont keep suggesting same values.'
                 }
               ]
             }
