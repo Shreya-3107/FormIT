@@ -1,3 +1,4 @@
+import 'package:FormIT/screens/splash_screen/SplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:FormIT/screens/dashboard/Dashboard.dart';
@@ -6,7 +7,10 @@ import 'screens/auth_pages/NewUser.dart';
 import 'screens/auth_pages/LoginPage.dart';
 import 'screens/org_pages/OrgCreation.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(MaterialApp(
+  debugShowCheckedModeBanner: false,
+  home: Splashscreen(),
+));
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -38,6 +42,7 @@ class MyApp extends StatelessWidget {
             );
           }
 
+          // Check if user is logged in
           if (snapshot.hasData && snapshot.data == true) {
              return DashBoard();
           }

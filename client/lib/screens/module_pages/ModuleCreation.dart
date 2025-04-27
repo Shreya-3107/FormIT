@@ -79,64 +79,64 @@ class _ModuleCreationState extends State<ModuleCreation> {
             end: Alignment.bottomRight,
           ),
         ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: GlassContainer(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 50),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      const SizedBox(height: 40),
-                      ShaderMask(
-                        shaderCallback: (bounds) {
-                          return LinearGradient(
-                            colors: [Colors.indigo, Colors.grey],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
-                        },
-                        child: Text(
-                          "AI Module Suggestions",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontFamily: 'Pixel',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: GlassContainer(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(bottom: 50),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const SizedBox(height: 40),
+                    ShaderMask(
+                      shaderCallback: (bounds) {
+                        return LinearGradient(
+                          colors: [Colors.indigo, Colors.grey],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                      },
+                      child: Text(
+                        "AI Module Suggestions",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontFamily: 'Pixel',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: widget.modules.length,
-                        itemBuilder: (context, index) {
-                          final module = widget.modules[index];
-                          return ListTile(
-                            title: Text(
-                              module['name'] ?? '',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(
-                              module['description'] ?? '',
-                              style: TextStyle(color: Colors.grey[700]),
-                            ),
-                            trailing: Checkbox(
-                              value: _selectedModules[index],
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _selectedModules[index] = value!;
-                                });
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 20),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: widget.modules.length,
+                      itemBuilder: (context, index) {
+                        final module = widget.modules[index];
+                        return ListTile(
+                          title: Text(
+                            module['name'] ?? '',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            module['description'] ?? '',
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
+                          trailing: Checkbox(
+                            value: _selectedModules[index],
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _selectedModules[index] = value!;
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),

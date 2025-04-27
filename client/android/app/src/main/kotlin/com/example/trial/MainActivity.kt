@@ -1,4 +1,4 @@
-package com.example.trial
+package com.example.FormIT
 
 import io.flutter.embedding.android.FlutterActivity
 
