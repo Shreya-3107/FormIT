@@ -67,11 +67,10 @@ class _FieldsListState extends State<FieldsList> {
 
     if (response.statusCode == 200) {
       setState(() {
-        // Remove the field from the list locally after successful deletion
         _fields.removeWhere((field) => field['_id'] == fieldId);
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Field deleted successfully")),
+        SnackBar(content: Text("field deleted")),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -96,10 +95,6 @@ class _FieldsListState extends State<FieldsList> {
       final data = json.decode(res.body);
       setState(() {
         _fields = List<Map<String, dynamic>>.from(data['fields']);
-
-        // Sort fields by 'index' before displaying
-        _fields.sort((a, b) => a['index'].compareTo(b['index']));
-
         _loading = false;
       });
     } else {
@@ -208,11 +203,11 @@ class _FieldsListState extends State<FieldsList> {
                                       final updated = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (_) => EditFieldsPage(
-                                              fieldId: field['_id'],
-                                              initialFieldName: field['name'],
-                                              fieldType: field['type'],
-                                            ),
+                                          builder: (_) => EditFieldsPage(
+                                            fieldId: field['_id'],
+                                            initialFieldName: field['name'],
+                                            fieldType: field['type'],
+                                          ),
                                         ),
                                       );
 

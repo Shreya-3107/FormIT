@@ -12,16 +12,11 @@ router.post('/create', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: 'orgId, moduleId, and name are required' });
     }
 
-    // Get the maximum index for the module and increment by 1
-    const lastField = await Field.findOne({ moduleId }).sort({ index: -1 }).exec();
-    const newIndex = lastField ? lastField.index + 1 : 0;
-
     const newField = new Field({
       orgId,
       moduleId,
       name,
-      type,
-      index: newIndex,  // Add index here
+      type
     });
 
     const savedField = await newField.save();
@@ -36,7 +31,7 @@ router.get('/getforMod/:moduleId', authMiddleware, async (req, res) => {
   try {
     const { moduleId } = req.params;
 
-    const fields = await Field.find({ moduleId }).sort({ index: 1 });  // Sort by index
+    const fields = await Field.find({ moduleId });
     res.json({ fields });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching fields', error });
@@ -57,14 +52,13 @@ router.get('/getfield/:fieldId', authMiddleware, async (req, res) => {
 // 👉 Update Field
 router.put('/update/:fieldId', authMiddleware, async (req, res) => {
   try {
-    const { name, type, index } = req.body;
+    const { name, type } = req.body;
 
     const field = await Field.findById(req.params.fieldId);
 
     field.name = name || field.name;
     field.type = type || field.type;
-    field.index = index !== undefined ? index : field.index;  // Allow updating index
-
+    
     await field.save();
 
     res.json({ message: 'Field updated successfully', field: field });
@@ -72,7 +66,6 @@ router.put('/update/:fieldId', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Error updating field', error });
   }
 });
-
 
 // 👉 Delete Field
 router.delete('/delete/:fieldId', authMiddleware, async (req, res) => {
