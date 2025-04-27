@@ -32,7 +32,8 @@ router.post('/suggest-modules', authMiddleware, async (req, res) => {
                     'Text response should strictly contain only the array. Suggest 10 modules. ' +
                     'Example format: [module1, module2, module3]. ' +
                     'Also, provide one more array in which you give all module descriptions. ' +
-                    'The format should be like this: [module1 description, module2 description, module3 description]'
+                    'The format should be like this: [module1 description, module2 description, module3 description]' +
+                    'Suggest unique values every time.'
                 }
               ]
             }
@@ -89,7 +90,8 @@ router.post('/suggest-fields', authMiddleware, async (req, res) => {
                 'Based on the given description suggest a list of fields in the form of an array. ' +
                 'No additional text should be given in the response. ' +
                 'Text response should strictly contain only the array. Suggest 10 fields. ' +
-                'Example format: [field1, field2, field3]. '
+                'Example format: [field1, field2, field3]. ' +
+                'Suggest unique values every time.'
               }
             ]
           }
@@ -148,7 +150,8 @@ router.post('/suggest-field-values', authMiddleware, async (req, res) => {
                     `Org name: ${orgName}, Org description: ${orgDescription}, Module name: ${moduleName}, Field name: ${name}, Field datatype: ${type}. ` +
                     'Based on the given details suggest a suitable value. ' +
                     'No additional text should be given in the response. ' +
-                    'Text response should strictly contain only the value. Suggest 1 optimum value suggestion. '
+                    'Text response should strictly contain only the value. Suggest 1 optimum value suggestion. ' +
+                    'Suggest unique values every time.'
                 }
               ]
             }
