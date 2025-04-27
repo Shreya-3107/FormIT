@@ -7,6 +7,7 @@ const fieldSchema = new mongoose.Schema({
   moduleId: { type: String, required: true },
   name: { type: String, required: true },
   type: { type: String, default: 'text' },
+  index: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now }
 });
 
